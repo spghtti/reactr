@@ -1,0 +1,37 @@
+.Header {
+  height: 60px;
+  outline: 1px solid pink;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+.Header-logo-container {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+.Header-container {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+input {
+  border: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+}
+input:focus {
+  outline: 0;
+}
+.Header-search-container {
+  display: flex;
+  width: 200px;
+  height: 20px;
+  border-radius: 20px;
+  background-color: #eee;
+  display: inline-block;
+  padding: 10px;
+}
