@@ -1,0 +1,33 @@
+.Explore {
+  position: absolute;
+  background-color: rgb(53, 70, 92);
+  height: 100vh;
+  width: 100vw;
+}
+.Explore-l .Explore-link {
+  color: #61dafb;
+}
+.Explore-content {
+  display: flex;
+  outline: 3px solid pink;
+  height: auto;
+}
+.Explore-cards-container {
+  outline: 3px solid red;
+  width: 70vw;
+  height: auto;
+}
+.Explore-sidebar-container {
+  outline: 3px solid blue;
+  width: 30vw;
+  height: auto;
+}
+.Explore-trending-cards {
+  display: flex;
+  gap: 5em;
+}
+.Explore-trend-card {
+  height: 200px;
+  width: 140px;
+  border: 1px solid green;
+}

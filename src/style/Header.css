@@ -1,6 +1,6 @@
 .Header {
+  display: flex;
   height: 60px;
-  outline: 1px solid pink;
   font-size: calc(10px + 2vmin);
   color: white;
 }
@@ -9,12 +9,17 @@
   height: 100%;
   align-items: center;
 }
+.Header-logo {
+  max-width: 60px;
+}
 .Header-container {
   display: flex;
   height: 100%;
   align-items: center;
 }
-input {
+.Header-search {
+  display: flex;
+  align-items: center;
   border: 0;
   background: transparent;
   -webkit-appearance: none;
@@ -23,15 +28,39 @@ input {
   -o-appearance: none;
   appearance: none;
 }
-input:focus {
+.Header-search:focus {
   outline: 0;
 }
 .Header-search-container {
   display: flex;
-  width: 200px;
+  max-width: 15em;
   height: 20px;
   border-radius: 20px;
   background-color: #eee;
   display: inline-block;
   padding: 10px;
+}
+.Navbar {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  width: 100%;
+}
+.Navbar-icon-container {
+  display: flex;
+  margin-right: 15px;
+  gap: 1em;
+}
+.Navbar-icon {
+  max-width: 25px;
+}
+.navbar-icon-button {
+  background: none;
+  border-style: none;
+  cursor: pointer;
+}
+.submit-post-button {
+  background: cyan;
+  padding: 5px 10px 5px 10px;
+  border-radius: 5px;
 }
