@@ -14,8 +14,31 @@ function Explore() {
             <div className="Explore-trend-card">trend</div>
             <div className="Explore-trend-card">trend</div>
             <div className="Explore-trend-card">trend</div>
+            <div className="Explore-trend-card">trend</div>
+            <div className="Explore-trend-card">trend</div>
           </div>
-          <div className="Explore-cards">cards</div>
+          <div className="Explore-featured">
+            <div className="Explore-featured-column">
+              <div className="Explore-featured-card"></div>
+              <div className="Explore-featured-card"></div>
+              <div className="Explore-featured-card"></div>
+            </div>
+            <div className="Explore-featured-column">
+              <div className="Explore-featured-card"></div>
+              <div className="Explore-featured-card"></div>
+              <div className="Explore-featured-card"></div>
+            </div>
+            <div className="Explore-featured-column">
+              <div className="Explore-featured-card"></div>
+              <div className="Explore-featured-card"></div>
+              <div className="Explore-featured-card"></div>
+            </div>
+            <div className="Explore-featured-column">
+              <div className="Explore-featured-card"></div>
+              <div className="Explore-featured-card"></div>
+              <div className="Explore-featured-card"></div>
+            </div>
+          </div>
         </div>
         <div className="Explore-sidebar-container">Sidebar</div>
       </div>
