@@ -3,9 +3,13 @@
     display: none;
   }
 }
+body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
 .Explore {
   position: absolute;
-  background-color: rgb(53, 70, 92);
+  background-color: rgb(0, 25, 53);
   height: 100vh;
   width: 100vw;
 }
@@ -15,26 +19,84 @@
 .Explore-content {
   display: flex;
   height: auto;
+  outline: 1px solid rgba(255, 255, 255, 0.13);
+}
+.Explore-trending-title {
+  color: white;
+  font-size: 1.5em;
 }
 .Explore-cards-container {
   width: 100%;
   height: auto;
+  margin: 2% 0% 2% 0%;
 }
 .Explore-sidebar-container {
   width: 30vw;
   height: auto;
+  outline: 1px solid rgba(255, 255, 255, 0.13);
 }
 .Explore-trending-cards {
   display: flex;
-  gap: 5em;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1.5em;
   width: 100%;
-  overflow-x: scroll;
+  margin-bottom: 5%;
+}
+.Explore-trending-title,
+.Explore-trending-cards {
+  margin-left: 5%;
 }
 .Explore-trend-card {
-  height: 200px;
-  min-width: 150px;
+  height: 88px;
+  min-width: 300px;
   background-color: red;
-  border-radius: 10px;
+  border-radius: 2px;
+}
+.Explore-trend-hashtag-info {
+  /* display: flex; */
+  float: left;
+  width: 50%;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.Explore-trend-hashtag-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: purple;
+  color: white;
+  height: 26px;
+  width: 26px;
+  border-radius: 50%;
+  margin-right: 5px;
+  float: left;
+}
+.Explore-trend-hashtag-headline {
+  width: 100%;
+  margin-left: 20px;
+  line-height: 1.5;
+}
+.Explore-trend-hashtag-image-container {
+  height: 100%;
+  flex-direction: row-reverse;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+.Explore-trend-hashtag-image {
+  width: 64px;
+  height: 64px;
+  float: right;
+}
+.Explore-trend-follow-button {
+  display: block;
+  width: 100%;
+  border: none;
+  height: 40px;
+  width: 121px;
+  margin: 5px 10px 10px 10px;
+  cursor: pointer;
 }
 .Explore-featured {
   height: 100%;
@@ -45,25 +107,27 @@
   flex-wrap: wrap;
   flex: 1;
   grid-template-columns: 300px 300px;
-  border: 1px solid purple;
 }
 .Explore-featured-column {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 10em;
-  flex: 1;
+  /* min-width: 15em; */
+  border: 1px solid brown;
   height: auto;
-  border: 1px solid blue;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 .Explore-featured-card {
-  min-width: 20em;
-  min-height: 40em;
+  /* min-width: 20em;
+  min-height: 30em; */
+  min-width: 300px;
+  min-height: 572px;
   flex-basis: 100%;
   background-color: #61dafb;
-  outline: 1px solid green;
-  margin: 0 10px 30px 10px;
+  outline: 1px solid black;
+  display: flex;
 }
 @media (max-width: 900px) {
   .Explore-featured {
@@ -73,7 +137,6 @@
     flex-direction: column;
     flex-wrap: wrap;
     grid-template-columns: 300px 300px;
-    border: 1px solid green;
   }
   .Explore-featured-column {
     height: 100%;
@@ -86,6 +149,5 @@
     min-height: 60em;
     flex-basis: 100%;
     background-color: #61dafb;
-    outline: 1px solid green;
   }
 }
