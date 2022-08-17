@@ -64,3 +64,27 @@
   padding: 5px 10px 5px 10px;
   border-radius: 5px;
 }
+.sign-in-buttons {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  width: 100%;
+}
+.sign-in-buttons > button {
+  color: #000000;
+  border: none;
+  width: 76px;
+  height: 35px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 3px;
+  margin-right: 10px;
+  line-height: 1.5;
+}
+#log-in-button {
+  background-color: #00cf35;
+}
+#sign-up-button {
+  background-color: #00b8ff;
+}

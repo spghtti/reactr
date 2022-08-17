@@ -1,8 +1,19 @@
 import smallLogo from '../images/small-logo.png';
+import React from 'react';
 import Navbar from './Navbar';
-// import searchIcon from '.../images/magnifying-glass-black-small.png';
 
-const Header = () => {
+const Header = (props) => {
+  const showLoggedOutButtons = () => {
+    return (
+      <div className="sign-in-buttons">
+        <button id="log-in-button" onClick={props.signIn}>
+          Log in
+        </button>
+        <button id="sign-up-button">Sign up</button>
+      </div>
+    );
+  };
+
   return (
     <div className="Header">
       <div className="Header-container">
@@ -16,7 +27,7 @@ const Header = () => {
           </span> */}
         </div>
       </div>
-      <Navbar />
+      {props.isLoggedIn ? <Navbar /> : showLoggedOutButtons()}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import './style/Explore.css';
 import './style/Header.css';
+import React from 'react';
 import Header from './components/Header';
 import placeholderSmall from './images/placeholder-small.jpg';
 import { firebaseApp, db } from './firebase';
@@ -17,11 +18,16 @@ const updateTrendingHashtags = () => {};
 
 // fetchTrendingHashtags();
 
-function Explore() {
+function Explore(props) {
   return (
     <div className="Explore">
       <header className="Explore-header">
-        <Header />
+        <Header
+          isLoggedIn={props.isLoggedIn}
+          setIsLoggedIn={props.setIsLoggedIn}
+          signIn={props.signIn}
+          initFirebaseAuth={props.initFirebaseAuth()}
+        />
       </header>
       <div className="Explore-content">
         <div className="Explore-cards-container">
