@@ -2,36 +2,17 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import App from './App';
 import Profile from './Profile';
-import {
-  getAuth,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-} from 'firebase/auth';
 
 const RouteSwitch = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  function authStateObserver(user) {
-    if (user) {
-      setIsLoggedIn(true);
-    } else {
-    }
-  }
+  const closeModal = () => {
+    document.querySelector('.login-modal-container').style.display = 'none';
+  };
 
-  async function signIn() {
-    var provider = new GoogleAuthProvider();
-    await signInWithPopup(getAuth(), provider);
-  }
-
-  function signOutUser() {
-    signOut(getAuth());
-  }
-
-  function initFirebaseAuth() {
-    onAuthStateChanged(getAuth(), authStateObserver);
-  }
+  const openModal = () => {
+    document.querySelector('.login-modal-container').style.display = 'flex';
+  };
 
   return (
     <BrowserRouter>
@@ -42,8 +23,7 @@ const RouteSwitch = () => {
             <App
               isLoggedIn={isLoggedIn}
               setIsLoggedIn={setIsLoggedIn}
-              signIn={signIn}
-              initFirebaseAuth={initFirebaseAuth}
+              openModal={openModal}
             />
           }
         />

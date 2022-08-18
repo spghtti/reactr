@@ -1,15 +1,18 @@
 import smallLogo from '../images/small-logo.png';
 import React from 'react';
 import Navbar from './Navbar';
+import LoginModal from './LoginModal';
 
 const Header = (props) => {
   const showLoggedOutButtons = () => {
     return (
       <div className="sign-in-buttons">
-        <button id="log-in-button" onClick={props.signIn}>
+        <button id="log-in-button" onClick={props.openModal}>
           Log in
         </button>
-        <button id="sign-up-button">Sign up</button>
+        <button id="sign-up-button" onClick={props.openModal}>
+          Sign up
+        </button>
       </div>
     );
   };
@@ -22,12 +25,10 @@ const Header = (props) => {
         </div>
         <div class="Header-search-container">
           <input class="Header-search" type="text" placeholder="" />
-          {/* <span>
-            <img src={searchIcon} alt="search icon" />
-          </span> */}
         </div>
       </div>
       {props.isLoggedIn ? <Navbar /> : showLoggedOutButtons()}
+      <LoginModal setIsLoggedIn={props.setIsLoggedIn} />
     </div>
   );
 };

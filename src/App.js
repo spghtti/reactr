@@ -25,8 +25,7 @@ function Explore(props) {
         <Header
           isLoggedIn={props.isLoggedIn}
           setIsLoggedIn={props.setIsLoggedIn}
-          signIn={props.signIn}
-          initFirebaseAuth={props.initFirebaseAuth()}
+          openModal={props.openModal}
         />
       </header>
       <div className="Explore-content">

@@ -5,11 +5,19 @@ import pencil from '../images/navbar/pencil.png';
 import user from '../images/navbar/user.png';
 import bubble from '../images/navbar/bubble.png';
 import bolt from '../images/navbar/bolt.png';
+import { getAuth, signOut } from 'firebase/auth';
 
 const Navbar = () => {
+  function signOutUser() {
+    signOut(getAuth());
+    // eslint-disable-next-line no-restricted-globals
+    location.reload(true);
+  }
+
   return (
     <div className="Navbar">
       <div className="Navbar-icon-container">
+        <button onClick={signOutUser}>sign out</button>
         <button className="navbar-icon-button">
           <img className="Navbar-icon" src={home} alt="" />
         </button>
