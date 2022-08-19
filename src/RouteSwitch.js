@@ -6,10 +6,6 @@ import Profile from './Profile';
 const RouteSwitch = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const closeModal = () => {
-    document.querySelector('.login-modal-container').style.display = 'none';
-  };
-
   const openModal = () => {
     document.querySelector('.login-modal-container').style.display = 'flex';
   };
