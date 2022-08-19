@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../style/LoginModal.css';
 import fullLogo from '../images/tumblr-logo-transparent.png';
 import googleLogo from '../images/google-logo.png';
@@ -32,6 +32,8 @@ const checkForClick = (event) => {
 };
 
 const LoginModal = (props) => {
+  const [email, setEmail] = useState('');
+
   function authStateObserver(user) {
     console.log(user.displayName);
     if (user) {

@@ -6,6 +6,7 @@
 body {
   font-family: 'Inter', sans-serif;
   font-weight: 600;
+  overflow-x: hidden;
 }
 .Explore {
   position: absolute;
@@ -44,7 +45,8 @@ body {
   margin-bottom: 5%;
 }
 .Explore-trending-title,
-.Explore-trending-cards {
+.Explore-trending-cards,
+.Explore-featured {
   margin-left: 5%;
 }
 .Explore-trend-card {
@@ -102,7 +104,7 @@ body {
   height: 100%;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   flex-direction: row;
   flex-wrap: wrap;
   flex: 1;
@@ -134,9 +136,9 @@ body {
     height: 100%;
     width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     flex-wrap: wrap;
-    grid-template-columns: 300px 300px;
+    grid-template-columns: 300px;
   }
   .Explore-featured-column {
     height: 100%;
@@ -149,5 +151,20 @@ body {
     min-height: 60em;
     flex-basis: 100%;
     background-color: #61dafb;
+  }
+  .Explore-trending-cards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5em;
+    width: 100%;
+    margin-bottom: 5%;
+  }
+  .Explore-trend-card {
+    height: 88px;
+    min-width: 300px;
+    background-color: red;
+    border-radius: 2px;
+    flex-basis: 90%;
   }
 }
