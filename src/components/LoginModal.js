@@ -181,6 +181,7 @@ const LoginModal = (props) => {
           </div>
         </div>
       </div>
+      {initFirebaseAuth()}
     </div>
   );
 };
