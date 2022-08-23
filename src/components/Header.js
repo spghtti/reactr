@@ -23,8 +23,8 @@ const Header = (props) => {
         <div className="Header-logo-container">
           <img className="Header-logo" src={smallLogo} alt="tumblr logo" />
         </div>
-        <div class="Header-search-container">
-          <input class="Header-search" type="text" placeholder="" />
+        <div className="Header-search-container">
+          <input className="Header-search" type="text" placeholder="" />
         </div>
       </div>
       {props.isLoggedIn ? <Navbar /> : showLoggedOutButtons()}

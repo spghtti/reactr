@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import '../style/LoginModal.css';
 import fullLogo from '../images/tumblr-logo-transparent.png';
 import googleLogo from '../images/google-logo.png';
@@ -10,32 +10,59 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
 } from 'firebase/auth';
-
-const showEmailPrompt = () => {
-  document.getElementById('emailPrompt').style.display = 'flex';
-};
-
-const showPasswordPrompt = (event) => {
-  event.preventDefault();
-  document.getElementById('passwordPrompt').style.display = 'flex';
-};
-
-const closeModal = () => {
-  document.querySelector('.login-modal-container').style.display = 'none';
-  document.getElementById('emailPrompt').style.display = 'none';
-  document.getElementById('passwordPrompt').style.display = 'none';
-};
 
 const checkForClick = (event) => {
   if (event.target.matches('.login-modal-container')) closeModal();
 };
+const showEmailPrompt = () => {
+  document.getElementById('emailPrompt').style.display = 'flex';
+};
+
+const closeModal = () => {
+  document.getElementById('login-email-form').reset();
+  document.getElementById('login-verify-password-form').reset();
+  document.getElementById('login-set-password-form').reset();
+  document.querySelector('.login-modal-container').style.display = 'none';
+  document.getElementById('emailPrompt').style.display = 'none';
+  document.getElementById('login-verify-password-form').style.display = 'none';
+  document.getElementById('login-set-password-form').style.display = 'none';
+};
+
+const showTemporarily = (target, seconds) => {
+  target.style.display = 'flex';
+  setTimeout(() => {
+    target.style.display = 'none';
+  }, seconds * 1000);
+};
+
+const showPasswordSignIn = () => {
+  document.getElementById('login-verify-password-form').style.display = 'flex';
+};
+
+const showPasswordCreation = () => {
+  document.getElementById('login-set-password-form').style.display = 'flex';
+};
 
 const LoginModal = (props) => {
-  const [email, setEmail] = useState('');
+  const auth = getAuth();
+
+  const determineAccountStatus = (event) => {
+    event.preventDefault();
+    const email = document.getElementById('email-input').value;
+    const errorMessage = document.getElementById('email-error-message');
+    fetchSignInMethodsForEmail(auth, email)
+      .then((signInMethods) => {
+        signInMethods.length ? showPasswordSignIn() : showPasswordCreation();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   function authStateObserver(user) {
-    console.log(user.displayName);
+    console.log(user);
     if (user) {
       props.setIsLoggedIn(true);
     } else {
@@ -54,6 +81,21 @@ const LoginModal = (props) => {
   function initFirebaseAuth() {
     onAuthStateChanged(getAuth(), authStateObserver);
   }
+
+  const createAccount = (event) => {
+    event.preventDefault();
+    const emailAddress = document.getElementById('email-input').value;
+    const password = document.getElementById('set-password-input').value;
+    createUserWithEmailAndPassword(auth, emailAddress, password)
+      .then(() => {
+        closeModal();
+      })
+      .catch((error) => {
+        console.log(`Error code: ${error.code}`);
+        console.log(error.message);
+      });
+    initFirebaseAuth();
+  };
 
   return (
     <div className="login-modal-container" onClick={checkForClick}>
@@ -81,42 +123,61 @@ const LoginModal = (props) => {
           </button>
         </div>
       </div>
-      {/* Modal 2 - Get email */}
+      {/* Modal 2 - Get email and password */}
       <div className="login-modal" id="emailPrompt">
         <div className="login-modal-header">
           <img src={fullLogo} alt="tumblr logo" className="login-modal-logo" />
         </div>
         <div className="login-content">
-          <label className="login-prompt">Enter your email</label>
           <div>
-            <form onSubmit={showPasswordPrompt}>
+            <form
+              className="login-form"
+              id="login-email-form"
+              onSubmit={determineAccountStatus}
+            >
+              <label className="login-form-label" htmlFor="email-input">
+                Enter your email:
+              </label>
               <input
                 type="email"
                 className="email-prompt"
                 id="email-input"
-                autocomplete="off"
+                autoComplete="off"
                 required
               />
             </form>
-          </div>
-        </div>
-      </div>
-      {/* Modal 3 - Get password(s) */}
-      <div className="login-modal" id="passwordPrompt">
-        <div className="login-modal-header">
-          <img src={fullLogo} alt="tumblr logo" className="login-modal-logo" />
-        </div>
-        <div className="login-content">
-          <label for="password-input" className="login-prompt">
-            Enter your password
-          </label>
-          <div>
-            <input
-              id="password-input"
-              type="password"
-              className="password-prompt"
-              autocomplete="off"
-            />
+            <form className="login-form" id="login-verify-password-form">
+              <label
+                htmlFor="verify-password-input"
+                className="login-form-label"
+              >
+                Enter your password:
+              </label>
+              <input
+                id="verify-password-input"
+                type="password"
+                className="password-prompt"
+                autoComplete="off"
+              />
+            </form>
+            <span className="login-error-message" id="password-error-message">
+              Sorry, that email and password combination does not match.
+            </span>
+            <form
+              className="login-form"
+              id="login-set-password-form"
+              onSubmit={createAccount}
+            >
+              <label htmlFor="set-password-input" className="login-form-label">
+                Set a password:
+              </label>
+              <input
+                id="set-password-input"
+                type="password"
+                className="password-prompt"
+                autoComplete="off"
+              />
+            </form>
           </div>
         </div>
       </div>

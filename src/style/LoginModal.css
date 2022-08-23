@@ -11,6 +11,7 @@
 .login-modal {
   display: flex;
   flex-direction: column;
+  align-items: center;
   background-color: rgb(124, 92, 255);
   border-radius: 6px;
   color: white;
@@ -26,6 +27,7 @@
 }
 .login-modal-header {
   display: flex;
+  align-items: center;
   justify-content: center;
   width: 100%;
 }
@@ -78,11 +80,29 @@
   position: absolute;
   display: none;
 }
-#passwordPrompt {
-  position: absolute;
-  display: none;
-}
-.login-prompt {
+.login-form-label {
   font-size: 1.125rem;
   margin-bottom: 10px;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.login-form > input {
+  margin-bottom: 20px;
+  line-height: 2.5;
+  width: 300px;
+}
+#login-verify-password-form {
+  display: none;
+}
+#login-set-password-form {
+  display: none;
+}
+.login-error-message {
+  color: rgb(255, 0, 0);
+  font-size: 0.95rem;
+  display: none;
 }
