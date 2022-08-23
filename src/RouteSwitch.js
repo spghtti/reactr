@@ -8,6 +8,7 @@ const RouteSwitch = () => {
 
   const openModal = () => {
     document.querySelector('.login-modal-container').style.display = 'flex';
+    document.getElementById('initial-login-modal').style.display = 'flex';
   };
 
   return (

@@ -79,6 +79,7 @@
 #emailPrompt {
   position: absolute;
   display: none;
+  height: auto;
 }
 .login-form-label {
   font-size: 1.125rem;
@@ -104,5 +105,15 @@
 .login-error-message {
   color: rgb(255, 0, 0);
   font-size: 0.95rem;
+  margin-bottom: 20px;
   display: none;
+}
+.login-modal-submit-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.login-modal-submit-button > img {
+  width: 50px;
 }
