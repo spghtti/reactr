@@ -6,6 +6,11 @@ import user from '../images/navbar/user.png';
 import bubble from '../images/navbar/bubble.png';
 import bolt from '../images/navbar/bolt.png';
 import { getAuth, signOut } from 'firebase/auth';
+import SubmitPostModal from './SubmitPostModal';
+
+const showSubmitPostModal = () => {
+  document.querySelector('.submit-post-modal-container').style.display = 'flex';
+};
 
 const Navbar = () => {
   function signOutUser() {
@@ -36,9 +41,13 @@ const Navbar = () => {
         <button className="navbar-icon-button">
           <img className="Navbar-icon" src={user} alt="" />
         </button>
-        <button className="navbar-icon-button submit-post-button">
+        <button
+          className="navbar-icon-button submit-post-button"
+          onClick={showSubmitPostModal}
+        >
           <img className="Navbar-icon" src={pencil} alt="" />
         </button>
+        <SubmitPostModal />
       </div>
     </div>
   );

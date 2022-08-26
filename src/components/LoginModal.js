@@ -76,6 +76,7 @@ const LoginModal = (props) => {
   function authStateObserver(user) {
     if (user) {
       props.setIsLoggedIn(true);
+      console.log(user);
     } else {
       props.setIsLoggedIn(false);
     }
@@ -85,7 +86,7 @@ const LoginModal = (props) => {
     var provider = new GoogleAuthProvider();
     await signInWithPopup(getAuth(), provider);
     document.querySelector('.login-modal-container').style.display = 'none';
-    initFirebaseAuth();
+    // initFirebaseAuth();
   }
 
   function initFirebaseAuth() {
@@ -112,7 +113,7 @@ const LoginModal = (props) => {
         showTemporarily(msg, 4);
       });
 
-    initFirebaseAuth();
+    // initFirebaseAuth();
   };
 
   const login = (event) => {
@@ -124,7 +125,6 @@ const LoginModal = (props) => {
         closeModal();
       })
       .catch((error) => {
-        console.log(error);
         const msg = document.getElementById('password-login-error-message');
         msg.innerText = error.message;
         showTemporarily(msg, 4);
@@ -239,7 +239,7 @@ const LoginModal = (props) => {
               <input
                 id="set-pfp-input"
                 name="set-pfp-input"
-                type="text"
+                type="url"
                 className="pfp-prompt"
                 autoComplete="off"
                 minLength="5"
