@@ -25,6 +25,7 @@ const showEmailPrompt = () => {
 };
 
 const closeModal = () => {
+  document.body.style.overflowY = 'auto';
   document.getElementById('login-email-form').reset();
   document.getElementById('login-verify-password-form').reset();
   document.getElementById('login-set-password-form').reset();
@@ -43,6 +44,7 @@ const showTemporarily = (target, seconds) => {
 };
 
 const showPasswordSignIn = () => {
+  document.body.style.overflowY = 'hidden';
   document.getElementById('email-input').disabled = 'disabled';
   document.getElementById('login-verify-password-form').style.display = 'flex';
 };
@@ -73,12 +75,23 @@ const LoginModal = (props) => {
       });
   };
 
+  const showLoadingIcon = () => {
+    props.setIsLoading(true);
+  };
+
+  const hideLoadingIcon = () => {
+    props.setIsLoading(false);
+  };
+
   function authStateObserver(user) {
+    showLoadingIcon();
     if (user) {
       props.setIsLoggedIn(true);
+      hideLoadingIcon();
       console.log(user);
     } else {
       props.setIsLoggedIn(false);
+      hideLoadingIcon();
     }
   }
 

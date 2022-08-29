@@ -26,6 +26,8 @@ function Explore(props) {
           isLoggedIn={props.isLoggedIn}
           setIsLoggedIn={props.setIsLoggedIn}
           openModal={props.openModal}
+          isLoading={props.isLoading}
+          setIsLoading={props.setIsLoading}
         />
       </header>
       <div className="Explore-content">

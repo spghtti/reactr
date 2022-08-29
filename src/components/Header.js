@@ -2,6 +2,7 @@ import smallLogo from '../images/small-logo.png';
 import React from 'react';
 import Navbar from './Navbar';
 import LoginModal from './LoginModal';
+import loading from '../images/loading.png';
 
 const Header = (props) => {
   const showLoggedOutButtons = () => {
@@ -27,8 +28,25 @@ const Header = (props) => {
           <input className="Header-search" type="text" placeholder="" />
         </div>
       </div>
-      {props.isLoggedIn ? <Navbar /> : showLoggedOutButtons()}
-      <LoginModal setIsLoggedIn={props.setIsLoggedIn} />
+      {props.isLoading ? (
+        <div className="header-loading-icon-container">
+          <img
+            src={loading}
+            alt="loading icon"
+            className="header-loading-icon"
+            id="header-loading-icon"
+          />
+        </div>
+      ) : props.isLoggedIn ? (
+        <Navbar />
+      ) : (
+        showLoggedOutButtons()
+      )}
+      <LoginModal
+        setIsLoggedIn={props.setIsLoggedIn}
+        isLoading={props.isLoading}
+        setIsLoading={props.setIsLoading}
+      />
     </div>
   );
 };
