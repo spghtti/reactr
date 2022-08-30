@@ -1,5 +1,5 @@
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import App from './App';
 import Profile from './Profile';
 
@@ -28,7 +28,18 @@ const RouteSwitch = () => {
             />
           }
         />
-        <Route path="/profile" element={<Profile />} />
+        <Route
+          path="/profile"
+          element={
+            <Profile
+              isLoggedIn={isLoggedIn}
+              setIsLoggedIn={setIsLoggedIn}
+              openModal={openModal}
+              isLoading={isLoading}
+              setIsLoading={setIsLoading}
+            />
+          }
+        />
       </Routes>
     </HashRouter>
   );
