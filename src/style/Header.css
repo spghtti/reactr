@@ -180,7 +180,7 @@
   min-width: 30px;
   cursor: pointer;
   background-color: white;
-  font-weight: 700;
+  font-weight: 500;
 }
 #take-me-back-button {
   font-size: 1.1rem;
@@ -188,7 +188,10 @@
   border-radius: 100px;
 }
 #sign-out-button {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   width: 95px;
   border-radius: 47px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-align: center;
 }

@@ -15,9 +15,9 @@ const SignOutModal = (props) => {
       <div className="sign-out-modal">
         <h2>Do you want to sign out?</h2>
         <div className="sign-out-buttons">
-          <button onClick={props.signOutUser} id="sign-out-button">
+          <span onClick={props.signOutUser} id="sign-out-button">
             Yes, sign me out
-          </button>
+          </span>
           <button onClick={closeSignOutModal} id="take-me-back-button">
             Take me back!
           </button>
