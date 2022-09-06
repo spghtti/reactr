@@ -1,6 +1,6 @@
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import React, { useState } from 'react';
-import App from './App';
+import Explore from './Explore';
 import Profile from './Profile';
 
 const RouteSwitch = () => {
@@ -14,12 +14,12 @@ const RouteSwitch = () => {
   };
 
   return (
-    <HashRouter basename="/">
+    <BrowserRouter basename="/">
       <Routes>
         <Route
           path="/"
           element={
-            <App
+            <Explore
               isLoggedIn={isLoggedIn}
               setIsLoggedIn={setIsLoggedIn}
               openModal={openModal}
@@ -29,7 +29,7 @@ const RouteSwitch = () => {
           }
         />
         <Route
-          path="/profile"
+          path="/profile/:id"
           element={
             <Profile
               isLoggedIn={isLoggedIn}
@@ -41,7 +41,7 @@ const RouteSwitch = () => {
           }
         />
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 };
 

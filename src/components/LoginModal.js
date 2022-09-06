@@ -86,24 +86,23 @@ const LoginModal = (props) => {
   function authStateObserver(user) {
     showLoadingIcon();
     if (user) {
+      console.log(`logged in as ${user.displayName}`);
       props.setIsLoggedIn(true);
       hideLoadingIcon();
-      console.log(user);
     } else {
       props.setIsLoggedIn(false);
       hideLoadingIcon();
     }
   }
 
+  function initFirebaseAuth() {
+    onAuthStateChanged(getAuth(), authStateObserver);
+  }
+
   async function signInWithGoogle() {
     var provider = new GoogleAuthProvider();
     await signInWithPopup(getAuth(), provider);
     document.querySelector('.login-modal-container').style.display = 'none';
-    // initFirebaseAuth();
-  }
-
-  function initFirebaseAuth() {
-    onAuthStateChanged(getAuth(), authStateObserver);
   }
 
   const createAccount = (event) => {
@@ -125,8 +124,6 @@ const LoginModal = (props) => {
         msg.innerText = error.message;
         showTemporarily(msg, 4);
       });
-
-    // initFirebaseAuth();
   };
 
   const login = (event) => {

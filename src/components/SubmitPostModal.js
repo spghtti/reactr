@@ -35,12 +35,16 @@ const getUserName = () => {
   return getAuth().currentUser.displayName;
 };
 
+const getProfPhoto = () => {
+  return getAuth().currentUser.photoURL;
+};
+
 async function writePost(event) {
   event.preventDefault();
   const title = document.getElementById(
     'submit-post-modal-form-input-title'
   ).value;
-  const url = document.getElementById(
+  const photoURL = document.getElementById(
     'submit-post-modal-form-input-link'
   ).value;
   const caption = document.getElementById(
@@ -52,10 +56,11 @@ async function writePost(event) {
     await addDoc(collection(profileRef, 'posts'), {
       name: getUserName(),
       title,
-      url,
+      photoURL,
       caption,
       // hashtags,
       time: serverTimestamp(),
+      profilePictureURL: getProfPhoto(),
     });
   } catch (error) {
     console.error('Error writing new message to Firebase Database', error);
@@ -65,6 +70,7 @@ async function writePost(event) {
 
 const SubmitPostModal = () => {
   const auth = getAuth();
+  console.log(getAuth().currentUser);
   return (
     <div className="submit-post-modal-container" onClick={checkForClick}>
       <div className="submit-post-modal">

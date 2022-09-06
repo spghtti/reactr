@@ -1,0 +1,123 @@
+body {
+  background-color: rgb(0, 25, 53);
+}
+
+.profile-page {
+  position: absolute;
+  background-color: rgb(0, 25, 53);
+  height: auto;
+  width: 100vw;
+}
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgb(0, 25, 53);
+  height: auto;
+  margin-top: 15px;
+  width: 100vw;
+}
+.profile-card-column {
+  width: 540px;
+  height: auto;
+}
+.content-card {
+  background-color: #ffffff;
+  width: 540px;
+  min-height: auto;
+  max-height: 1100px;
+  border-radius: 5px;
+}
+.content-card-header {
+  display: flex;
+  flex-direction: row;
+}
+.profile-picture {
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+.content-card-header-profile-info {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+  width: 100%;
+}
+.content-card-header-profile-info-ellipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  float: right;
+  margin-right: 20px;
+}
+.content-card-image-container {
+  width: 100%;
+  object-fit: cover;
+}
+
+.content-card-image {
+  width: 100%;
+  object-fit: cover;
+  max-height: 645px;
+}
+.content-card-caption,
+.content-card-title {
+  margin: 15px;
+}
+.content-card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.content-card-hashtags {
+  color: gray;
+  font-weight: 400;
+  margin: 15px 15px 0 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+}
+.content-card-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 1.2rem;
+  color: gray;
+  width: 100%;
+  height: 50px;
+  margin: 15px;
+  margin-bottom: 20px;
+}
+.content-card-notes {
+  width: 100%;
+}
+.content-card-footer-icon-container {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  display: flex;
+  width: 100%;
+  margin: 40px;
+}
+.content-card-footer-icon {
+  float: right;
+  width: 25px;
+  margin: 10px;
+}
+.load-more-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+.load-more-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+  border: none;
+  width: 150px;
+  height: 50px;
+  cursor: pointer;
+}
