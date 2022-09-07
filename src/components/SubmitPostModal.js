@@ -70,7 +70,6 @@ async function writePost(event) {
 
 const SubmitPostModal = () => {
   const auth = getAuth();
-  console.log(getAuth().currentUser);
   return (
     <div className="submit-post-modal-container" onClick={checkForClick}>
       <div className="submit-post-modal">

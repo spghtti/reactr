@@ -7,7 +7,6 @@ import placeholder from './images/placeholder.png';
 import chat from './images/content-card/chat.png';
 import heart from './images/content-card/heart.png';
 import reblog from './images/content-card/retweet.png';
-import Card from './components/Card';
 import {
   query,
   orderBy,
@@ -17,21 +16,35 @@ import {
   getDocs,
   startAfter,
 } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from './firebase';
-// import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const Profile = (props) => {
   const [userPosts, setUserPosts] = useState();
   const [lastPost, setLastPost] = useState();
+  const { id } = useParams();
 
   // NEED TO MAKE THIS GET UID FROM URL
-  const profileRef = doc(db, 'profiles', getAuth().currentUser.uid);
+  const profileRef = doc(db, 'profiles', id);
   const postsRef = collection(profileRef, 'posts');
 
   useEffect(() => {
     querySnapshot();
   }, []);
+
+  function authStateObserver(user) {
+    if (user) {
+      console.log(`logged in as ${user.displayName}`);
+      props.setIsLoggedIn(true);
+    } else {
+      props.setIsLoggedIn(false);
+    }
+  }
+
+  function initFirebaseAuth() {
+    onAuthStateChanged(getAuth(), authStateObserver);
+  }
 
   async function querySnapshot() {
     const q = query(postsRef, orderBy('time', 'desc'), limit(3));
@@ -41,8 +54,6 @@ const Profile = (props) => {
     const lastVisible = result.docs[result.docs.length - 1];
 
     result.forEach((doc) => {
-      console.log(doc.id);
-      console.log(doc.data());
       allPosts.push(doc.data());
       allPosts[allPosts.length - 1].id = doc.id;
     });
@@ -144,7 +155,7 @@ const Profile = (props) => {
           Load more
         </button>
       </div>
-      {}
+      {/* {initFirebaseAuth()} */}
     </div>
   );
 };

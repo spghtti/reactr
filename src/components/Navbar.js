@@ -29,17 +29,17 @@ const Navbar = () => {
   return (
     <div className="Navbar">
       <div className="Navbar-icon-container">
-        <button className="navbar-icon-button">
+        {/* <button className="navbar-icon-button">
           <img className="Navbar-icon" src={home} alt="Home button" />
+        </button> */}
+        <button className="navbar-icon-button" onClick={openSignOutModal}>
+          <img className="Navbar-icon" src={signout} alt="Sign out" />
         </button>
-        <Link to="/explore" style={{ display: 'flex' }}>
+        <Link to="/" style={{ display: 'flex' }}>
           <button className="navbar-icon-button">
             <img className="Navbar-icon" src={compass} alt="Explore page" />
           </button>
         </Link>
-        <button className="navbar-icon-button" onClick={openSignOutModal}>
-          <img className="Navbar-icon" src={signout} alt="Sign out" />
-        </button>
         <Link
           to={`/profile/${getAuth().currentUser.uid}`}
           style={{ display: 'flex' }}
