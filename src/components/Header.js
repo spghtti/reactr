@@ -3,6 +3,7 @@ import React from 'react';
 import Navbar from './Navbar';
 import LoginModal from './LoginModal';
 import loading from '../images/loading.png';
+import { Link } from 'react-router-dom';
 
 const Header = (props) => {
   const showLoggedOutButtons = () => {
@@ -21,9 +22,11 @@ const Header = (props) => {
   return (
     <div className="Header">
       <div className="Header-container">
-        <div className="Header-logo-container">
-          <img className="Header-logo" src={smallLogo} alt="tumblr logo" />
-        </div>
+        <Link to="/" style={{ display: 'flex' }}>
+          <div className="Header-logo-container">
+            <img className="Header-logo" src={smallLogo} alt="tumblr logo" />
+          </div>
+        </Link>
         <div className="Header-search-container">
           <input className="Header-search" type="text" placeholder="" />
         </div>

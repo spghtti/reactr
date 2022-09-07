@@ -50,7 +50,6 @@ async function writePost(event) {
   const caption = document.getElementById(
     'submit-post-modal-form-input-caption'
   ).value;
-  // const hashtags = document.getElementById('submit-post-modal-form-input-caption').value;
   const profileRef = doc(db, 'profiles', getUID());
   try {
     await addDoc(collection(profileRef, 'posts'), {
@@ -61,6 +60,7 @@ async function writePost(event) {
       // hashtags,
       time: serverTimestamp(),
       profilePictureURL: getProfPhoto(),
+      notes: 0,
     });
   } catch (error) {
     console.error('Error writing new message to Firebase Database', error);

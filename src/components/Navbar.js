@@ -3,7 +3,7 @@ import home from '../images/navbar/home.png';
 import pencil from '../images/navbar/pencil.png';
 import signout from '../images/navbar/signout.png';
 import user from '../images/navbar/user.png';
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth, signOut, updateProfile } from 'firebase/auth';
 import SubmitPostModal from './SubmitPostModal';
 import SignOutModal from './SignOutModal';
 import { Link } from 'react-router-dom';
