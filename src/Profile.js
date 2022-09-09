@@ -25,9 +25,10 @@ import { useParams } from 'react-router-dom';
 const Profile = (props) => {
   const [userPosts, setUserPosts] = useState();
   const [lastPost, setLastPost] = useState();
+  const [comments, setComments] = useState();
+  const [lastComment, setLastComment] = useState();
   const { id } = useParams();
 
-  // NEED TO MAKE THIS GET UID FROM URL
   const profileRef = doc(db, 'profiles', id);
   const postsRef = collection(profileRef, 'posts');
 
@@ -79,12 +80,12 @@ const Profile = (props) => {
     return `${notes} notes`;
   };
 
-  const showComments = (event) => {
+  const showCommentSection = (event) => {
     const postID = event.target.id;
     const index = postID.indexOf('-');
     const ref = postID.slice(index + 1);
-    console.log(event.target);
     const commentSection = document.getElementById(`comments-${ref}`);
+    fetchComments(event);
     if (commentSection.style.display === 'flex') {
       commentSection.style.display = 'none';
     } else {
@@ -113,9 +114,44 @@ const Profile = (props) => {
     }
   }
 
+  async function fetchComments(event) {
+    const postID = event.target.parentNode.parentNode.parentNode.id;
+    const commentsRef = collection(
+      db,
+      `/profiles/${id}/posts/${postID}/comments`
+    );
+    const q = query(commentsRef, orderBy('time'), limit(3));
+    const result = await getDocs(q);
+    const lastVisible = result.docs[result.docs.length - 1];
+    const allComments = [];
+
+    result.forEach((doc) => {
+      console.log(doc.data());
+      allComments.push(doc.data());
+      allComments[allComments.length - 1].id = doc.id;
+    });
+    setComments(allComments);
+    setLastComment(lastVisible);
+  }
+
+  const showComments = () => {
+    let currentComments = comments;
+    if (currentComments) {
+      return (
+        <div>
+          {comments.map((post, index) => (
+            <div className="content-card-comment" key={index}>
+              <img className="profile-picture" src={post.photoURL} alt="" />
+              <div className="content-card-comment-caption">{post.comment}</div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+  };
+
   const showPosts = () => {
     let currentPosts = userPosts;
-    console.log(getAuth().currentUser);
     if (currentPosts) {
       return (
         <div>
@@ -163,7 +199,7 @@ const Profile = (props) => {
                     className="content-card-footer-icon"
                     alt="comments icon"
                     src={chat}
-                    onClick={showComments}
+                    onClick={showCommentSection}
                     id={`chat-${post.id}`}
                   />
                 </div>
@@ -177,7 +213,7 @@ const Profile = (props) => {
                     className="profile-picture"
                     src={getAuth().currentUser.photoURL}
                     alt=""
-                  ></img>
+                  />
                   <div className="content-card-comment-input-container">
                     <textarea
                       className="content-card-comment-input"
@@ -197,32 +233,10 @@ const Profile = (props) => {
                     </button>
                   </div>
                 </div>
-                <div className="content-card-comment">
-                  <img className="profile-picture" src="#"></img>
-                  <div className="content-card-comment-caption">
-                    Really short comment
-                  </div>
-                </div>
-                <div className="content-card-comment">
-                  <img className="profile-picture" src="#"></img>
-                  <div className="content-card-comment-caption">
-                    Really long comment goes here Really long comment goes here
-                    Really long comment goes here Really long comment goes here
-                  </div>
-                </div>
-                <div className="content-card-comment">
-                  <img className="profile-picture" src="#"></img>
-                  <div className="content-card-comment-caption">
-                    Really long comment goes here Really long comment goes here
-                    Really long comment goes here Really long comment goes here
-                    Really long comment goes here Really long comment goes here
-                    Really
-                  </div>
-                </div>
+                {showComments()}
               </div>
             </div>
           ))}
-          ;
         </div>
       );
     }
