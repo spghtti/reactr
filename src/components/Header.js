@@ -27,9 +27,6 @@ const Header = (props) => {
             <img className="Header-logo" src={smallLogo} alt="tumblr logo" />
           </div>
         </Link>
-        <div className="Header-search-container">
-          <input className="Header-search" type="text" placeholder="" />
-        </div>
       </div>
       {props.isLoading ? (
         <div className="header-loading-icon-container">

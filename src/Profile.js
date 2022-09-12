@@ -16,11 +16,14 @@ import {
   collection,
   doc,
   getDocs,
+  setDoc,
+  increment,
   startAfter,
 } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from './firebase';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { type } from '@testing-library/user-event/dist/type';
 
 const Profile = (props) => {
   const [userPosts, setUserPosts] = useState();
@@ -61,6 +64,9 @@ const Profile = (props) => {
     const allPosts = [...userPosts];
     const result = await getDocs(q);
     const lastVisible = result.docs[result.docs.length - 1];
+    const button = document.querySelector('.load-more-button');
+
+    if (result.size === 0) button.style.display = 'none';
 
     result.forEach((doc) => {
       allPosts.push(doc.data());
@@ -85,13 +91,20 @@ const Profile = (props) => {
     const index = postID.indexOf('-');
     const ref = postID.slice(index + 1);
     const commentSection = document.getElementById(`comments-${ref}`);
-    fetchComments(event);
+
     if (commentSection.style.display === 'flex') {
       commentSection.style.display = 'none';
     } else {
+      fetchComments(event);
       commentSection.style.display = 'flex';
     }
   };
+
+  async function addNote(postID) {
+    await setDoc(`/profiles/${id}/posts/${postID}`, {
+      notes: increment(1),
+    });
+  }
 
   const getUserName = () => getAuth().currentUser.displayName;
   const getPicture = () => getAuth().currentUser.photoURL;
@@ -101,6 +114,11 @@ const Profile = (props) => {
     const postID = event.target.parentNode.parentNode.parentNode.parentNode.id;
     const comment = document.getElementById(`input-${postID}`).value;
     const postsRef = doc(db, 'profiles', id, 'posts', postID);
+
+    document.getElementById(`input-${postID}`).value = '';
+
+    addNote(postID);
+
     try {
       await addDoc(collection(postsRef, 'comments'), {
         name: getUserName(),
@@ -114,8 +132,22 @@ const Profile = (props) => {
     }
   }
 
+  const checkCommentLength = (event) => {
+    const replyBtn = event.target.parentNode.lastChild;
+    if (event.target.value === '') {
+      replyBtn.disabled = 'true';
+      replyBtn.style.color = 'gray';
+      replyBtn.style.cursor = 'not-allowed';
+    } else {
+      replyBtn.disabled = 'false';
+      replyBtn.style.color = '#0d8db0';
+      replyBtn.style.cursor = 'pointer';
+    }
+  };
+
   async function fetchComments(event) {
     const postID = event.target.parentNode.parentNode.parentNode.id;
+    hideOtherCommentSections(postID);
     const commentsRef = collection(
       db,
       `/profiles/${id}/posts/${postID}/comments`
@@ -123,6 +155,7 @@ const Profile = (props) => {
     const q = query(commentsRef, orderBy('time'), limit(3));
     const result = await getDocs(q);
     const lastVisible = result.docs[result.docs.length - 1];
+
     const allComments = [];
 
     result.forEach((doc) => {
@@ -134,6 +167,15 @@ const Profile = (props) => {
     setLastComment(lastVisible);
   }
 
+  const hideOtherCommentSections = (postID) => {
+    const commentSections = document.querySelectorAll(
+      '.content-card-comment-section'
+    );
+    commentSections.forEach((commentSection) => {
+      if (commentSection.id !== postID) commentSection.style.display = 'none';
+    });
+  };
+
   const showComments = () => {
     let currentComments = comments;
     if (currentComments) {
@@ -141,7 +183,9 @@ const Profile = (props) => {
         <div>
           {comments.map((post, index) => (
             <div className="content-card-comment" key={index}>
-              <img className="profile-picture" src={post.photoURL} alt="" />
+              <Link to={`/profile/${post.uid}`}>
+                <img className="profile-picture" src={post.photoURL} alt="" />
+              </Link>
               <div className="content-card-comment-caption">{post.comment}</div>
             </div>
           ))}
@@ -192,11 +236,6 @@ const Profile = (props) => {
                   />
                   <img
                     className="content-card-footer-icon"
-                    alt="reblog icon"
-                    src={reblog}
-                  />
-                  <img
-                    className="content-card-footer-icon"
                     alt="comments icon"
                     src={chat}
                     onClick={showCommentSection}
@@ -218,6 +257,7 @@ const Profile = (props) => {
                     <textarea
                       className="content-card-comment-input"
                       id={`input-${post.id}`}
+                      onChange={checkCommentLength}
                       type="text"
                       minLength="1"
                       maxLength="459"
