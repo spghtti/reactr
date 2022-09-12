@@ -15,9 +15,9 @@ import {
   collection,
   doc,
   getDocs,
-  setDoc,
   increment,
   startAfter,
+  updateDoc,
 } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from './firebase';
@@ -99,9 +99,10 @@ const Profile = (props) => {
     }
   };
 
-  async function addNote(postID) {
-    await setDoc(`/profiles/${id}/posts/${postID}`, {
-      notes: increment(1),
+  async function addNote(number, postID) {
+    const postRef = doc(db, 'profiles', id, 'posts', postID);
+    await updateDoc(postRef, {
+      notes: increment(number),
     });
   }
 
@@ -116,7 +117,7 @@ const Profile = (props) => {
 
     document.getElementById(`input-${postID}`).value = '';
 
-    addNote(postID);
+    addNote(1, postID);
 
     try {
       await addDoc(collection(postsRef, 'comments'), {
@@ -227,14 +228,19 @@ const Profile = (props) => {
     }
   };
 
-  // async function handleLike(event) {
-  //   console.log(event.target.parentNode.parentNode.parentNode.parentNode.id);
-  // }
-
-  // async function addLike(event) {
-  //   console.log(event.target.parentNode.parentNode.parentNode.parentNode.id);
-  //   // addNote()
-  // }
+  async function handleLike(event) {
+    const postID = event.target.parentNode.parentNode.parentNode.id;
+    console.log(event.target);
+    if (event.target.dataset.liked === 'true') {
+      addNote(-1, postID);
+      event.target.dataset.liked = 'false';
+      event.target.style.background = 'none';
+    } else {
+      addNote(1, postID);
+      event.target.dataset.liked = 'true';
+      event.target.style.backgroundColor = 'red';
+    }
+  }
 
   const showPosts = () => {
     let currentPosts = userPosts;
@@ -275,7 +281,8 @@ const Profile = (props) => {
                     className="content-card-footer-icon"
                     alt="heart icon"
                     src={heart}
-                    // onClick={handleLike}
+                    data-liked="false"
+                    onClick={handleLike}
                   />
                   <img
                     className="content-card-footer-icon"
