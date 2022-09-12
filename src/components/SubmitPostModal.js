@@ -95,8 +95,15 @@ const SubmitPostModal = () => {
             id="submit-post-modal-form-input-caption"
             wrap="wrap"
           ></textarea>
-          <button onClick={closePostModal}>Close</button>
-          <input type="submit" value="Post now" onClick={writePost} />
+          <input
+            type="submit"
+            value="Post now"
+            onClick={writePost}
+            id="submit-post-button"
+          />
+          <button onClick={closePostModal} id="close-post-button">
+            Close
+          </button>
         </form>
       </div>
     </div>

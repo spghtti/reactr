@@ -14,15 +14,17 @@ import {
   limit,
   collection,
   doc,
+  getDoc,
   getDocs,
   increment,
   startAfter,
   updateDoc,
+  deleteDoc,
+  setDoc,
 } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from './firebase';
 import { useParams, Link } from 'react-router-dom';
-import { type } from '@testing-library/user-event/dist/type';
 
 const Profile = (props) => {
   const [userPosts, setUserPosts] = useState();
@@ -99,11 +101,75 @@ const Profile = (props) => {
     }
   };
 
-  async function addNote(number, postID) {
+  // async function checkForLike(postID) {
+  //   const docRef = doc(
+  //     db,
+  //     'profiles',
+  //     id,
+  //     'posts',
+  //     postID,
+  //     'liked',
+  //     `${getUID()}`
+  //   );
+  //   const snap = await getDoc(docRef);
+  //   return snap.exists();
+  // }
+
+  async function addNote(postID) {
     const postRef = doc(db, 'profiles', id, 'posts', postID);
-    await updateDoc(postRef, {
-      notes: increment(number),
-    });
+
+    const docRef = doc(
+      db,
+      'profiles',
+      id,
+      'posts',
+      postID,
+      'liked',
+      `${getUID()}`
+    );
+
+    const snap = await getDoc(docRef);
+
+    if (!snap.exists()) {
+      await updateDoc(postRef, {
+        notes: increment(1),
+      });
+      try {
+        await setDoc(
+          doc(db, 'profiles', id, 'posts', postID, 'liked', `${getUID()}`),
+          {
+            name: getUserName(),
+            photoURL: getPicture(),
+          }
+        );
+      } catch (error) {
+        console.error('Error writing new message to Firebase Database', error);
+      }
+    }
+  }
+  async function removeNote(postID) {
+    const postRef = doc(db, 'profiles', id, 'posts', postID);
+
+    const docRef = doc(
+      db,
+      'profiles',
+      id,
+      'posts',
+      postID,
+      'liked',
+      `${getUID()}`
+    );
+
+    let snap = await getDoc(docRef);
+
+    if (snap.exists()) {
+      await updateDoc(postRef, {
+        notes: increment(-1),
+      });
+      await deleteDoc(
+        doc(db, 'profiles', id, 'posts', postID, 'liked', `${getUID()}`)
+      );
+    }
   }
 
   const getUserName = () => getAuth().currentUser.displayName;
@@ -117,7 +183,7 @@ const Profile = (props) => {
 
     document.getElementById(`input-${postID}`).value = '';
 
-    addNote(1, postID);
+    addNote(postID);
 
     try {
       await addDoc(collection(postsRef, 'comments'), {
@@ -230,13 +296,13 @@ const Profile = (props) => {
 
   async function handleLike(event) {
     const postID = event.target.parentNode.parentNode.parentNode.id;
-    console.log(event.target);
+
     if (event.target.dataset.liked === 'true') {
-      addNote(-1, postID);
+      removeNote(postID);
       event.target.dataset.liked = 'false';
       event.target.style.background = 'none';
-    } else {
-      addNote(1, postID);
+    } else if (event.target.dataset.liked === 'false') {
+      addNote(postID);
       event.target.dataset.liked = 'true';
       event.target.style.backgroundColor = 'red';
     }
@@ -284,6 +350,7 @@ const Profile = (props) => {
                     data-liked="false"
                     onClick={handleLike}
                   />
+
                   <img
                     className="content-card-footer-icon"
                     alt="comments icon"

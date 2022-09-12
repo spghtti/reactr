@@ -59,3 +59,21 @@
   word-wrap: break-word;
   resize: none;
 }
+#submit-post-button {
+  margin-top: 10px;
+  border: none;
+  background-color: #00b8ff;
+  color: #242121;
+  font-weight: 600;
+  width: 150px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 1.15rem;
+}
+#close-post-button {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: darkgray;
+  text-decoration: underline;
+}
