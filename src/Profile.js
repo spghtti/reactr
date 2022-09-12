@@ -3,10 +3,9 @@ import React, { useEffect, useState } from 'react';
 import './style/Explore.css';
 import './style/Header.css';
 import './style/Profile.css';
-import placeholder from './images/placeholder.png';
+import loading from './images/loading-black.png';
 import chat from './images/content-card/chat.png';
 import heart from './images/content-card/heart.png';
-import reblog from './images/content-card/retweet.png';
 import {
   query,
   orderBy,
@@ -146,6 +145,10 @@ const Profile = (props) => {
   };
 
   async function fetchComments(event) {
+    const loadingIcon =
+      event.target.parentNode.parentNode.parentNode.childNodes[6].childNodes[1];
+
+    loadingIcon.style.display = 'flex';
     const postID = event.target.parentNode.parentNode.parentNode.id;
     hideOtherCommentSections(postID);
     const commentsRef = collection(
@@ -159,7 +162,34 @@ const Profile = (props) => {
     const allComments = [];
 
     result.forEach((doc) => {
-      console.log(doc.data());
+      allComments.push(doc.data());
+      allComments[allComments.length - 1].id = doc.id;
+    });
+    setComments(allComments);
+    setLastComment(lastVisible);
+  }
+
+  async function fetchMoreComments(event) {
+    const postID = event.target.parentNode.parentNode.parentNode.id;
+    const commentsRef = collection(
+      db,
+      `/profiles/${id}/posts/${postID}/comments`
+    );
+    const q = query(
+      commentsRef,
+      orderBy('time'),
+      limit(3),
+      startAfter(lastComment)
+    );
+
+    const allComments = [...comments];
+    const result = await getDocs(q);
+    const lastVisible = result.docs[result.docs.length - 1];
+
+    if (result.size === 0)
+      event.target.parentNode.lastChild.style.display = 'none';
+
+    result.forEach((doc) => {
       allComments.push(doc.data());
       allComments[allComments.length - 1].id = doc.id;
     });
@@ -178,6 +208,9 @@ const Profile = (props) => {
 
   const showComments = () => {
     let currentComments = comments;
+    document.querySelectorAll('.comments-loading-icon').forEach((icon) => {
+      icon.style.display = 'none';
+    });
     if (currentComments) {
       return (
         <div>
@@ -193,6 +226,15 @@ const Profile = (props) => {
       );
     }
   };
+
+  // async function handleLike(event) {
+  //   console.log(event.target.parentNode.parentNode.parentNode.parentNode.id);
+  // }
+
+  // async function addLike(event) {
+  //   console.log(event.target.parentNode.parentNode.parentNode.parentNode.id);
+  //   // addNote()
+  // }
 
   const showPosts = () => {
     let currentPosts = userPosts;
@@ -233,6 +275,7 @@ const Profile = (props) => {
                     className="content-card-footer-icon"
                     alt="heart icon"
                     src={heart}
+                    // onClick={handleLike}
                   />
                   <img
                     className="content-card-footer-icon"
@@ -273,7 +316,13 @@ const Profile = (props) => {
                     </button>
                   </div>
                 </div>
+                <img src={loading} className="comments-loading-icon" alt="" />
                 {showComments()}
+                <div className="load-more-comments-button">
+                  <button onClick={fetchMoreComments}>
+                    Load more comments
+                  </button>
+                </div>
               </div>
             </div>
           ))}
