@@ -40,6 +40,10 @@ const Profile = (props) => {
     querySnapshot();
   }, []);
 
+  useEffect(() => {
+    addLikes();
+  }, [userPosts]);
+
   async function querySnapshot() {
     const q = query(postsRef, orderBy('time', 'desc'), limit(3));
     const allPosts = [];
@@ -101,19 +105,33 @@ const Profile = (props) => {
     }
   };
 
-  // async function checkForLike(postID) {
-  //   const docRef = doc(
-  //     db,
-  //     'profiles',
-  //     id,
-  //     'posts',
-  //     postID,
-  //     'liked',
-  //     `${getUID()}`
-  //   );
-  //   const snap = await getDoc(docRef);
-  //   return snap.exists();
-  // }
+  async function checkForLike(postID) {
+    const docRef = doc(
+      db,
+      'profiles',
+      id,
+      'posts',
+      postID,
+      'liked',
+      `${getUID()}`
+    );
+    const snap = await getDoc(docRef);
+    return snap.exists();
+  }
+
+  async function addLikes() {
+    const cards = document.querySelectorAll('.content-card');
+    cards.forEach((card) => {
+      const heart = card.childNodes[5].childNodes[1].children[0];
+      const result = checkForLike(card.id);
+      result.then((value) => {
+        if (value) {
+          heart.dataset.liked = 'true';
+          heart.style.backgroundColor = 'red';
+        }
+      });
+    });
+  }
 
   async function addNote(postID) {
     const postRef = doc(db, 'profiles', id, 'posts', postID);
