@@ -65,7 +65,7 @@ async function writePost(event) {
   } catch (error) {
     console.error('Error writing new message to Firebase Database', error);
   }
-  closePostModal();
+  closePostModal(event);
 }
 
 const SubmitPostModal = () => {

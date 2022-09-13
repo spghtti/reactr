@@ -48,7 +48,6 @@ const Profile = (props) => {
     const q = query(postsRef, orderBy('time', 'desc'), limit(3));
     const allPosts = [];
     const result = await getDocs(q);
-
     const lastVisible = result.docs[result.docs.length - 1];
 
     result.forEach((doc) => {
@@ -195,16 +194,14 @@ const Profile = (props) => {
   const getUID = () => getAuth().currentUser.uid;
 
   async function writeComment(event) {
+    console.log('button clicked');
     const postID = event.target.parentNode.parentNode.parentNode.parentNode.id;
     const comment = document.getElementById(`input-${postID}`).value;
     const postsRef = doc(db, 'profiles', id, 'posts', postID);
 
-    document.getElementById(`input-${postID}`).value = '';
-
-    addNote(postID);
-
     try {
-      await addDoc(collection(postsRef, 'comments'), {
+      console.log('writing comment');
+      await setDoc(collection(postsRef, 'comments'), {
         name: getUserName(),
         photoURL: getPicture(),
         comment,
@@ -214,16 +211,17 @@ const Profile = (props) => {
     } catch (error) {
       console.error('Error writing new message to Firebase Database', error);
     }
+    // document.getElementById(`input-${postID}`).value = '';
   }
 
   const checkCommentLength = (event) => {
     const replyBtn = event.target.parentNode.lastChild;
     if (event.target.value === '') {
-      replyBtn.disabled = 'true';
+      replyBtn.setAttribute('disabled');
       replyBtn.style.color = 'gray';
       replyBtn.style.cursor = 'not-allowed';
     } else {
-      replyBtn.disabled = 'false';
+      replyBtn.removeAttribute('disabled');
       replyBtn.style.color = '#0d8db0';
       replyBtn.style.cursor = 'pointer';
     }
@@ -235,18 +233,23 @@ const Profile = (props) => {
 
     loadingIcon.style.display = 'flex';
     const postID = event.target.parentNode.parentNode.parentNode.id;
+    console.log(`PostID: ${postID}`);
     hideOtherCommentSections(postID);
+    console.log(`ProfileID: ${id}`);
     const commentsRef = collection(
       db,
       `/profiles/${id}/posts/${postID}/comments`
     );
-    const q = query(commentsRef, orderBy('time'), limit(3));
-    const result = await getDocs(q);
+
+    const result = await getDocs(
+      collection(doc(db, 'profiles', id, 'posts', postID), 'comments')
+    );
     const lastVisible = result.docs[result.docs.length - 1];
 
     const allComments = [];
 
     result.forEach((doc) => {
+      console.log(doc.data());
       allComments.push(doc.data());
       allComments[allComments.length - 1].id = doc.id;
     });
@@ -301,7 +304,7 @@ const Profile = (props) => {
         <div>
           {comments.map((post, index) => (
             <div className="content-card-comment" key={index}>
-              <Link to={`/profile/${post.uid}`}>
+              <Link to={`/profile/${post.uid}`} onClick={() => window.reload()}>
                 <img className="profile-picture" src={post.photoURL} alt="" />
               </Link>
               <div className="content-card-comment-caption">{post.comment}</div>

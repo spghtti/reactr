@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import Explore from './Explore';
 import Profile from './Profile';
@@ -40,6 +40,7 @@ const RouteSwitch = () => {
             />
           }
         />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );
