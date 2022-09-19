@@ -194,14 +194,12 @@ const Profile = (props) => {
   const getUID = () => getAuth().currentUser.uid;
 
   async function writeComment(event) {
-    console.log('button clicked');
     const postID = event.target.parentNode.parentNode.parentNode.parentNode.id;
     const comment = document.getElementById(`input-${postID}`).value;
     const postsRef = doc(db, 'profiles', id, 'posts', postID);
 
     try {
-      console.log('writing comment');
-      await setDoc(collection(postsRef, 'comments'), {
+      await addDoc(collection(postsRef, 'comments'), {
         name: getUserName(),
         photoURL: getPicture(),
         comment,
@@ -329,6 +327,16 @@ const Profile = (props) => {
     }
   }
 
+  const showHashtags = (arr) => {
+    if (arr === undefined) {
+      return '';
+    } else {
+      const hashtags = [];
+      arr.forEach((hashtag) => hashtags.push(`${hashtag} `));
+      return hashtags;
+    }
+  };
+
   const showPosts = () => {
     let currentPosts = userPosts;
     if (currentPosts) {
@@ -358,7 +366,10 @@ const Profile = (props) => {
               </div>
               <div className="content-card-title">{post.title}</div>
               <div className="content-card-caption">{post.caption}</div>
-              <div className="content-card-hashtags">{post.hashtags}</div>
+              <div className="content-card-hashtags">
+                {showHashtags(post.hashtags)}
+                {/* {post.hashtags} */}
+              </div>
               <div className="content-card-footer">
                 <div className="content-card-notes">
                   {showNotes(post.notes)}{' '}

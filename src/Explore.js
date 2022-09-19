@@ -14,6 +14,15 @@ async function fetchTrendingHashtags() {
   });
 }
 
+const randomBackgroundColor = () => {
+  const colors = [
+    'rgb(232, 215, 56)',
+    'rgb(255, 138, 0)',
+    'rgb(255, 73, 48)',
+    'rgb(124, 92, 255)',
+  ];
+};
+
 const updateTrendingHashtags = () => {};
 
 // fetchTrendingHashtags();
@@ -34,82 +43,48 @@ function Explore(props) {
         <div className="Explore-cards-container">
           <h2 className="Explore-trending-title">Trending 🚀</h2>
           <div className="Explore-trending-cards">
-            <div className="Explore-trend-card">
+            <div className="Explore-trend-card" id="hashtag-trend-one">
               <div className="Explore-trend-hashtag-info">
-                <div className="Explore-trend-hashtag-number">1</div>
+                <div
+                  className="Explore-trend-hashtag-number"
+                  id="hashtag-trend-one-number"
+                >
+                  1
+                </div>
                 <h3 className="Explore-trend-hashtag-headline">Trend</h3>
-              </div>
-              <div className="Explore-trend-hashtag-image-container">
-                <img
-                  src={placeholderSmall}
-                  alt=""
-                  className="Explore-trend-hashtag-image"
-                />
               </div>
             </div>
-            <div className="Explore-trend-card">
+            <div className="Explore-trend-card" id="hashtag-trend-two">
               <div className="Explore-trend-hashtag-info">
-                <div className="Explore-trend-hashtag-number">1</div>
+                <div
+                  className="Explore-trend-hashtag-number"
+                  id="hashtag-trend-two-number"
+                >
+                  2
+                </div>
                 <h3 className="Explore-trend-hashtag-headline">Trend</h3>
-              </div>
-              <div className="Explore-trend-hashtag-image-container">
-                <img
-                  src={placeholderSmall}
-                  alt=""
-                  className="Explore-trend-hashtag-image"
-                />
               </div>
             </div>
-            <div className="Explore-trend-card">
+            <div className="Explore-trend-card" id="hashtag-trend-three">
               <div className="Explore-trend-hashtag-info">
-                <div className="Explore-trend-hashtag-number">1</div>
+                <div
+                  className="Explore-trend-hashtag-number"
+                  id="hashtag-trend-three-number"
+                >
+                  3
+                </div>
                 <h3 className="Explore-trend-hashtag-headline">Trend</h3>
-              </div>
-              <div className="Explore-trend-hashtag-image-container">
-                <img
-                  src={placeholderSmall}
-                  alt=""
-                  className="Explore-trend-hashtag-image"
-                />
               </div>
             </div>
-            <div className="Explore-trend-card">
+            <div className="Explore-trend-card" id="hashtag-trend-four">
               <div className="Explore-trend-hashtag-info">
-                <div className="Explore-trend-hashtag-number">1</div>
+                <div
+                  className="Explore-trend-hashtag-number"
+                  id="hashtag-trend-four-number"
+                >
+                  4
+                </div>
                 <h3 className="Explore-trend-hashtag-headline">Trend</h3>
-              </div>
-              <div className="Explore-trend-hashtag-image-container">
-                <img
-                  src={placeholderSmall}
-                  alt=""
-                  className="Explore-trend-hashtag-image"
-                />
-              </div>
-            </div>
-            <div className="Explore-trend-card">
-              <div className="Explore-trend-hashtag-info">
-                <div className="Explore-trend-hashtag-number">1</div>
-                <h3 className="Explore-trend-hashtag-headline">Trend</h3>
-              </div>
-              <div className="Explore-trend-hashtag-image-container">
-                <img
-                  src={placeholderSmall}
-                  alt=""
-                  className="Explore-trend-hashtag-image"
-                />
-              </div>
-            </div>
-            <div className="Explore-trend-card">
-              <div className="Explore-trend-hashtag-info">
-                <div className="Explore-trend-hashtag-number">1</div>
-                <h3 className="Explore-trend-hashtag-headline">Trend</h3>
-              </div>
-              <div className="Explore-trend-hashtag-image-container">
-                <img
-                  src={placeholderSmall}
-                  alt=""
-                  className="Explore-trend-hashtag-image"
-                />
               </div>
             </div>
           </div>

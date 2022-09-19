@@ -39,6 +39,19 @@ const getProfPhoto = () => {
   return getAuth().currentUser.photoURL;
 };
 
+const getHashtags = (str) => {
+  const splitString = str.toLowerCase().split(' ');
+  const newString = [];
+  splitString.forEach((word) => {
+    if (word[0] === '#') {
+      newString.push(word.slice(1));
+    } else {
+      newString.push(word);
+    }
+  });
+  return newString;
+};
+
 async function writePost(event) {
   event.preventDefault();
   const title = document.getElementById(
@@ -50,14 +63,19 @@ async function writePost(event) {
   const caption = document.getElementById(
     'submit-post-modal-form-input-caption'
   ).value;
+  const hashtags = getHashtags(
+    document.getElementById('submit-post-modal-form-input-hashtags').value
+  );
+
   const profileRef = doc(db, 'profiles', getUID());
+
   try {
     await addDoc(collection(profileRef, 'posts'), {
       name: getUserName(),
       title,
       photoURL,
       caption,
-      // hashtags,
+      hashtags,
       time: serverTimestamp(),
       profilePictureURL: getProfPhoto(),
       notes: 0,
@@ -93,6 +111,12 @@ const SubmitPostModal = () => {
             placeholder="Go ahead, put anything"
             className="submit-post-modal-form-input"
             id="submit-post-modal-form-input-caption"
+            wrap="wrap"
+          ></textarea>
+          <textarea
+            placeholder="#hashtags"
+            className="submit-post-modal-form-input"
+            id="submit-post-modal-form-input-hashtags"
             wrap="wrap"
           ></textarea>
           <input

@@ -53,10 +53,10 @@ body {
   height: 88px;
   min-width: 300px;
   background-color: red;
-  border-radius: 2px;
+  color: white;
+  border-radius: 5px;
 }
 .Explore-trend-hashtag-info {
-  /* display: flex; */
   float: left;
   width: 50%;
   margin-top: 10px;
@@ -76,8 +76,9 @@ body {
 }
 .Explore-trend-hashtag-headline {
   width: 100%;
+  height: 100%;
   margin-left: 20px;
-  line-height: 1.5;
+  line-height: 1.75;
 }
 .Explore-trend-hashtag-image-container {
   height: 100%;
@@ -122,8 +123,6 @@ body {
   margin-bottom: 10px;
 }
 .Explore-featured-card {
-  /* min-width: 20em;
-  min-height: 30em; */
   min-width: 300px;
   min-height: 572px;
   flex-basis: 100%;
@@ -131,6 +130,35 @@ body {
   outline: 1px solid black;
   display: flex;
 }
+#hashtag-trend-one {
+  background-color: rgba(232, 215, 56, 0.5);
+}
+#hashtag-trend-one-number {
+  background-color: rgb(232, 215, 56);
+  color: rgb(29, 29, 29);
+}
+#hashtag-trend-two {
+  background-color: rgba(255, 138, 0, 0.5);
+}
+#hashtag-trend-two-number {
+  background-color: rgba(255, 138, 0);
+  color: rgb(29, 29, 29);
+}
+#hashtag-trend-three {
+  background-color: rgba(255, 73, 48, 0.5);
+}
+#hashtag-trend-three-number {
+  background-color: rgb(255, 73, 48);
+  color: rgb(29, 29, 29);
+}
+#hashtag-trend-four {
+  background-color: rgba(124, 92, 255, 0.5);
+}
+#hashtag-trend-four-number {
+  background-color: rgba(124, 92, 255);
+  color: rgb(29, 29, 29);
+}
+
 @media (max-width: 900px) {
   .Explore-featured {
     height: 100%;
@@ -163,8 +191,6 @@ body {
   .Explore-trend-card {
     height: 88px;
     min-width: 300px;
-    background-color: red;
-    border-radius: 2px;
     flex-basis: 90%;
   }
 }
