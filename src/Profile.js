@@ -256,6 +256,13 @@ const Profile = (props) => {
   }
 
   async function fetchMoreComments(event) {
+    const commentSectionLength =
+      event.target.parentNode.parentNode.children[2].children.length;
+    if (commentSectionLength === 0) {
+      event.target.style.display = 'none';
+      return;
+    }
+
     const postID = event.target.parentNode.parentNode.parentNode.id;
     const commentsRef = collection(
       db,
@@ -270,6 +277,11 @@ const Profile = (props) => {
 
     const allComments = [...comments];
     const result = await getDocs(q);
+
+    if (result.size === 0) {
+      event.target.display = 'none';
+    }
+
     const lastVisible = result.docs[result.docs.length - 1];
 
     if (result.size === 0)
@@ -299,7 +311,7 @@ const Profile = (props) => {
     });
     if (currentComments) {
       return (
-        <div>
+        <div id="fetched-comments">
           {comments.map((post, index) => (
             <div className="content-card-comment" key={index}>
               <Link to={`/profile/${post.uid}`} onClick={() => window.reload()}>

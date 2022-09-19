@@ -40,16 +40,16 @@ const getProfPhoto = () => {
 };
 
 const getHashtags = (str) => {
-  const splitString = str.toLowerCase().split(' ');
-  const newString = [];
+  const splitString = str.split(' ');
+  const newArr = [];
   splitString.forEach((word) => {
-    if (word[0] === '#') {
-      newString.push(word.slice(1));
+    if (word[0] !== '#') {
+      newArr.push('#' + word);
     } else {
-      newString.push(word);
+      newArr.push(word);
     }
   });
-  return newString;
+  return newArr;
 };
 
 async function writePost(event) {
