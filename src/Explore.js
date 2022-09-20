@@ -1,10 +1,19 @@
 import './style/Explore.css';
 import './style/Header.css';
-import React from 'react';
+import './style/Profile.css';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import placeholderSmall from './images/placeholder-small.jpg';
-import { firebaseApp, db } from './firebase';
-import { doc, getDocs, collection } from 'firebase/firestore';
+import { db } from './firebase';
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  limit,
+  query,
+  orderBy,
+} from 'firebase/firestore';
 
 async function fetchTrendingHashtags() {
   const docRef = collection(db, 'trending-hashtags');
@@ -28,6 +37,47 @@ const updateTrendingHashtags = () => {};
 // fetchTrendingHashtags();
 
 function Explore(props) {
+  const [userPosts, setUserPosts] = useState();
+  const [lastPost, setLastPost] = useState();
+  const [comments, setComments] = useState();
+  const [lastComment, setLastComment] = useState();
+
+  const allPosts = [];
+
+  useEffect(() => {
+    querySnapshot();
+  }, []);
+
+  // useEffect(() => {
+  //   addLikes();
+  // }, [userPosts]);
+
+  // const profileRef = doc(db, 'profiles', id);
+  const featuredRef = collection(db, 'featured');
+
+  async function getFeaturedPost(UID, postID) {
+    const docRef = doc(db, 'profiles', UID, 'posts', postID);
+    const result = await getDoc(docRef);
+    allPosts.push(result.data());
+  }
+
+  async function querySnapshot() {
+    // const q = query(featuredRef, orderBy('time', 'desc'), limit(10));
+    const q = query(featuredRef);
+    const results = await getDocs(q);
+    const lastVisible = results.docs[results.docs.length - 1];
+
+    results.forEach((doc) => {
+      const UID = doc.data().reference._key.path.segments[6];
+      const postID = doc.data().reference._key.path.segments[8];
+      console.log(`${UID}, ${postID}`);
+      getFeaturedPost(UID, postID);
+    });
+    setUserPosts(allPosts);
+    console.log(allPosts);
+    setLastPost(lastVisible);
+  }
+
   return (
     <div className="Explore">
       <header className="Explore-header">

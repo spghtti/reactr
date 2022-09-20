@@ -127,7 +127,7 @@ body {
   min-height: 572px;
   flex-basis: 100%;
   background-color: #61dafb;
-  outline: 1px solid black;
+  outline: 2px solid black;
   display: flex;
 }
 #hashtag-trend-one {
