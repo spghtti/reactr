@@ -1,6 +1,9 @@
 import './style/Explore.css';
 import './style/Header.css';
 import './style/Profile.css';
+import loading from './images/loading-black.png';
+import chat from './images/content-card/chat.png';
+import heart from './images/content-card/heart.png';
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import placeholderSmall from './images/placeholder-small.jpg';
@@ -15,29 +18,22 @@ import {
   orderBy,
 } from 'firebase/firestore';
 
-async function fetchTrendingHashtags() {
-  const docRef = collection(db, 'trending-hashtags');
-  const docs = await getDocs(docRef);
-  docs.forEach((doc) => {
-    console.log(doc.data());
-  });
-}
-
-const randomBackgroundColor = () => {
-  const colors = [
-    'rgb(232, 215, 56)',
-    'rgb(255, 138, 0)',
-    'rgb(255, 73, 48)',
-    'rgb(124, 92, 255)',
-  ];
-};
+// async function fetchTrendingHashtags() {
+//   const docRef = collection(db, 'trending-hashtags');
+//   const docs = await getDocs(docRef);
+//   docs.forEach((doc) => {
+//     console.log(doc.data());
+//   });
+// }
 
 const updateTrendingHashtags = () => {};
 
 // fetchTrendingHashtags();
 
 function Explore(props) {
-  const [userPosts, setUserPosts] = useState();
+  const [userPosts, setUserPosts] = useState([]);
+  const [postKeys, setPostKeys] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [lastPost, setLastPost] = useState();
   const [comments, setComments] = useState();
   const [lastComment, setLastComment] = useState();
@@ -48,6 +44,15 @@ function Explore(props) {
     querySnapshot();
   }, []);
 
+  useEffect(() => {
+    getFeaturedPost();
+  }, [postKeys]);
+
+  useEffect(() => {
+    setIsLoaded(true);
+    console.log(userPosts);
+  }, [userPosts]);
+
   // useEffect(() => {
   //   addLikes();
   // }, [userPosts]);
@@ -55,28 +60,124 @@ function Explore(props) {
   // const profileRef = doc(db, 'profiles', id);
   const featuredRef = collection(db, 'featured');
 
-  async function getFeaturedPost(UID, postID) {
-    const docRef = doc(db, 'profiles', UID, 'posts', postID);
-    const result = await getDoc(docRef);
-    allPosts.push(result.data());
+  async function getFeaturedPost() {
+    const array = [];
+    for (const key of postKeys) {
+      const docRef = doc(db, 'profiles', key[0], 'posts', key[1]);
+      const result = await getDoc(docRef);
+      array.push(result.data());
+    }
+    setUserPosts(array);
   }
 
   async function querySnapshot() {
-    // const q = query(featuredRef, orderBy('time', 'desc'), limit(10));
     const q = query(featuredRef);
     const results = await getDocs(q);
     const lastVisible = results.docs[results.docs.length - 1];
+    const keys = [];
 
     results.forEach((doc) => {
       const UID = doc.data().reference._key.path.segments[6];
       const postID = doc.data().reference._key.path.segments[8];
-      console.log(`${UID}, ${postID}`);
-      getFeaturedPost(UID, postID);
+      keys.push([UID, postID]);
     });
-    setUserPosts(allPosts);
-    console.log(allPosts);
-    setLastPost(lastVisible);
+    setPostKeys(keys);
+    // setLastPost(lastVisible);
   }
+
+  const showPosts = () => {
+    if (userPosts) {
+      return (
+        <div>
+          {userPosts.map((post, index) => (
+            <div className="content-card" key={index} id={index}>
+              {console.log('flag')}
+              <div className="content-card-header">
+                <div className="content-card-header-profile-info">
+                  <img
+                    src={post.profilePictureURL}
+                    alt=""
+                    className="profile-picture"
+                  />
+                  <span>{post.name}</span>
+                </div>
+                <div className="content-card-header-profile-info-ellipsis">
+                  <span>...</span>
+                </div>
+              </div>
+              <div className="content-card-image-container">
+                <img
+                  src={post.photoURL}
+                  alt=""
+                  className="content-card-image"
+                />
+              </div>
+              <div className="content-card-title">{post.title}</div>
+              <div className="content-card-caption">{post.caption}</div>
+              <div className="content-card-hashtags">
+                {/* {showHashtags(post.hashtags)} */}
+              </div>
+              <div className="content-card-footer">
+                <div className="content-card-notes">
+                  {/* {showNotes(post.notes)}{' '} */}
+                </div>
+                <div className="content-card-footer-icon-container">
+                  <img
+                    className="content-card-footer-icon"
+                    alt="heart icon"
+                    src={heart}
+                    data-liked="false"
+                    // onClick={handleLike}
+                  />
+
+                  <img
+                    className="content-card-footer-icon"
+                    alt="comments icon"
+                    src={chat}
+                    // onClick={showCommentSection}
+                  />
+                </div>
+              </div>
+              <div className="content-card-comment-section">
+                <div className="content-card-comment">
+                  <img
+                    className="profile-picture"
+                    // src={getAuth().currentUser.photoURL}
+                    alt=""
+                  />
+                  <div className="content-card-comment-input-container">
+                    <textarea
+                      className="content-card-comment-input"
+                      // onChange={checkCommentLength}
+                      type="text"
+                      minLength="1"
+                      maxLength="459"
+                      placeholder="Leave a comment"
+                      wrap="wrap"
+                      rows="1"
+                    ></textarea>
+                    <button
+                      className="content-card-comment-reply-button"
+                      // onClick={writeComment}
+                    >
+                      Reply
+                    </button>
+                  </div>
+                </div>
+                <img src={loading} className="comments-loading-icon" alt="" />
+                {/* {showComments()} */}
+                <div className="load-more-comments-button">
+                  {/* <button onClick={fetchMoreComments}>
+                    Load more comments
+                  </button> */}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+  };
 
   return (
     <div className="Explore">
@@ -139,26 +240,9 @@ function Explore(props) {
             </div>
           </div>
           <div className="Explore-featured">
-            <div className="Explore-featured-column">
-              <div className="Explore-featured-card"></div>
-              <div className="Explore-featured-card"></div>
-              <div className="Explore-featured-card"></div>
-            </div>
-            <div className="Explore-featured-column">
-              <div className="Explore-featured-card"></div>
-              <div className="Explore-featured-card"></div>
-              <div className="Explore-featured-card"></div>
-            </div>
-            <div className="Explore-featured-column">
-              <div className="Explore-featured-card"></div>
-              <div className="Explore-featured-card"></div>
-              <div className="Explore-featured-card"></div>
-            </div>
-            <div className="Explore-featured-column">
-              <div className="Explore-featured-card"></div>
-              <div className="Explore-featured-card"></div>
-              <div className="Explore-featured-card"></div>
-            </div>
+            {/* <div className="Explore-featured-column">
+              <div className="Explore-featured-card"></div> */}
+            {userPosts ? showPosts() : ''}
           </div>
         </div>
         <div className="Explore-sidebar-container">Sidebar</div>

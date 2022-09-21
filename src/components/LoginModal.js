@@ -86,7 +86,7 @@ const LoginModal = (props) => {
   function authStateObserver(user) {
     showLoadingIcon();
     if (user) {
-      console.log(`logged in as ${user.displayName}`);
+      console.log(`USER: ${user.displayName}`);
       props.setIsLoggedIn(true);
       hideLoadingIcon();
     } else {
