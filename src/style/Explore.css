@@ -102,14 +102,13 @@ body {
   cursor: pointer;
 }
 .Explore-featured {
-  height: 100%;
+  height: auto;
   width: 100%;
   display: flex;
   justify-content: left;
   flex-direction: row;
   flex-wrap: wrap;
   flex: 1;
-  grid-template-columns: 300px 300px;
 }
 .Explore-featured-column {
   display: flex;

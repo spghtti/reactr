@@ -16,6 +16,7 @@ import {
   limit,
   query,
   orderBy,
+  startAfter,
 } from 'firebase/firestore';
 
 // async function fetchTrendingHashtags() {
@@ -71,7 +72,7 @@ function Explore(props) {
   }
 
   async function querySnapshot() {
-    const q = query(featuredRef);
+    const q = query(featuredRef, orderBy('time', 'desc'), limit(3));
     const results = await getDocs(q);
     const lastVisible = results.docs[results.docs.length - 1];
     const keys = [];
@@ -82,16 +83,38 @@ function Explore(props) {
       keys.push([UID, postID]);
     });
     setPostKeys(keys);
-    // setLastPost(lastVisible);
+    setLastPost(lastVisible);
+  }
+
+  async function loadMorePosts() {
+    const q = query(
+      featuredRef,
+      orderBy('time', 'desc'),
+      limit(3),
+      startAfter(lastPost)
+    );
+    const result = await getDocs(q);
+    const lastVisible = result.docs[result.docs.length - 1];
+    const button = document.querySelector('.load-more-button');
+
+    if (result.size === 0) button.style.display = 'none';
+    const allKeys = [...postKeys];
+
+    result.forEach((doc) => {
+      const UID = doc.data().reference._key.path.segments[6];
+      const postID = doc.data().reference._key.path.segments[8];
+      allKeys.push([UID, postID]);
+    });
+    setPostKeys(allKeys);
+    setLastPost(lastVisible);
   }
 
   const showPosts = () => {
     if (userPosts) {
       return (
-        <div>
+        <div className="">
           {userPosts.map((post, index) => (
             <div className="content-card" key={index} id={index}>
-              {console.log('flag')}
               <div className="content-card-header">
                 <div className="content-card-header-profile-info">
                   <img
@@ -243,6 +266,11 @@ function Explore(props) {
             {/* <div className="Explore-featured-column">
               <div className="Explore-featured-card"></div> */}
             {userPosts ? showPosts() : ''}
+          </div>
+          <div className="load-more-button-container">
+            <button onClick={loadMorePosts} className="load-more-button">
+              Load more
+            </button>
           </div>
         </div>
         <div className="Explore-sidebar-container">Sidebar</div>
