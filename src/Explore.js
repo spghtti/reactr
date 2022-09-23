@@ -8,16 +8,24 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import placeholderSmall from './images/placeholder-small.jpg';
 import { db } from './firebase';
+import { getAuth } from 'firebase/auth';
 import {
   doc,
+  addDoc,
   getDoc,
   getDocs,
+  updateDoc,
+  deleteDoc,
   collection,
   limit,
+  serverTimestamp,
   query,
   orderBy,
+  setDoc,
+  increment,
   startAfter,
 } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
 
 // async function fetchTrendingHashtags() {
 //   const docRef = collection(db, 'trending-hashtags');
@@ -34,7 +42,6 @@ const updateTrendingHashtags = () => {};
 function Explore(props) {
   const [userPosts, setUserPosts] = useState([]);
   const [postKeys, setPostKeys] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [lastPost, setLastPost] = useState();
   const [comments, setComments] = useState();
   const [lastComment, setLastComment] = useState();
@@ -50,13 +57,8 @@ function Explore(props) {
   }, [postKeys]);
 
   useEffect(() => {
-    setIsLoaded(true);
-    console.log(userPosts);
+    addLikes();
   }, [userPosts]);
-
-  // useEffect(() => {
-  //   addLikes();
-  // }, [userPosts]);
 
   // const profileRef = doc(db, 'profiles', id);
   const featuredRef = collection(db, 'featured');
@@ -67,6 +69,8 @@ function Explore(props) {
       const docRef = doc(db, 'profiles', key[0], 'posts', key[1]);
       const result = await getDoc(docRef);
       array.push(result.data());
+      array[array.length - 1].userID = key[0];
+      array[array.length - 1].id = key[1];
     }
     setUserPosts(array);
   }
@@ -109,12 +113,269 @@ function Explore(props) {
     setLastPost(lastVisible);
   }
 
+  const showHashtags = (arr) => {
+    if (arr === undefined) {
+      return '';
+    } else {
+      const hashtags = [];
+      arr.forEach((hashtag) => hashtags.push(`#${hashtag} `));
+      return hashtags;
+    }
+  };
+
+  const hideOtherCommentSections = (postID) => {
+    const commentSections = document.querySelectorAll(
+      '.content-card-comment-section'
+    );
+    commentSections.forEach((commentSection) => {
+      if (commentSection.id !== postID) commentSection.style.display = 'none';
+    });
+  };
+
+  async function addNote(userID, postID) {
+    const postRef = doc(db, 'profiles', userID, 'posts', postID);
+
+    const docRef = doc(
+      db,
+      'profiles',
+      userID,
+      'posts',
+      postID,
+      'liked',
+      `${getUID()}`
+    );
+
+    const snap = await getDoc(docRef);
+
+    if (!snap.exists()) {
+      await updateDoc(postRef, {
+        notes: increment(1),
+      });
+      try {
+        await setDoc(
+          doc(db, 'profiles', userID, 'posts', postID, 'liked', `${getUID()}`),
+          {
+            name: getUserName(),
+            photoURL: getPicture(),
+          }
+        );
+      } catch (error) {
+        console.error('Error writing new message to Firebase Database', error);
+      }
+    }
+  }
+
+  async function removeNote(userID, postID) {
+    const postRef = doc(db, 'profiles', userID, 'posts', postID);
+
+    const docRef = doc(
+      db,
+      'profiles',
+      userID,
+      'posts',
+      postID,
+      'liked',
+      `${getUID()}`
+    );
+
+    let snap = await getDoc(docRef);
+
+    if (snap.exists()) {
+      await updateDoc(postRef, {
+        notes: increment(-1),
+      });
+      await deleteDoc(
+        doc(db, 'profiles', userID, 'posts', postID, 'liked', `${getUID()}`)
+      );
+    }
+  }
+
+  const incrementNote = (node, amount) => {
+    const text = node.innerText;
+    let num = Number(text.slice(0, text.indexOf(' '))) + amount;
+    if (num === 1) {
+      node.innerText = '1 note';
+    } else {
+      node.innerText = `${num} notes`;
+    }
+  };
+
+  async function handleLike(event) {
+    const postID = event.target.parentNode.parentNode.parentNode.id;
+    const userID =
+      event.target.parentNode.parentNode.parentNode.dataset.profile;
+    const notes = event.target.parentNode.parentNode.childNodes[0];
+
+    if (event.target.dataset.liked === 'true') {
+      removeNote(userID, postID);
+      event.target.dataset.liked = 'false';
+      event.target.style.background = 'none';
+      incrementNote(notes, -1);
+    } else if (event.target.dataset.liked === 'false') {
+      addNote(userID, postID);
+      event.target.dataset.liked = 'true';
+      event.target.style.backgroundColor = 'red';
+      incrementNote(notes, 1);
+    }
+  }
+
+  async function fetchComments(event) {
+    const loadingIcon =
+      event.target.parentNode.parentNode.parentNode.childNodes[6].childNodes[1];
+
+    loadingIcon.style.display = 'flex';
+    const postID = event.target.parentNode.parentNode.parentNode.id;
+    const userID = event.target.dataset.profile;
+
+    hideOtherCommentSections(postID);
+    const commentsRef = collection(
+      db,
+      `/profiles/${userID}/posts/${postID}/comments`
+    );
+    const q = query(commentsRef, orderBy('time'), limit(3));
+    const result = await getDocs(q);
+
+    const lastVisible = result.docs[result.docs.length - 1];
+
+    const allComments = [];
+
+    result.forEach((doc) => {
+      console.log(doc.data());
+      allComments.push(doc.data());
+      allComments[allComments.length - 1].id = doc.id;
+    });
+    setComments(allComments);
+    setLastComment(lastVisible);
+  }
+
+  const checkCommentLength = (event) => {
+    const replyBtn = event.target.parentNode.lastChild;
+    if (event.target.value === '') {
+      replyBtn.style.pointerEvents = 'none';
+      replyBtn.style.color = 'gray';
+      replyBtn.style.cursor = 'not-allowed';
+    } else {
+      replyBtn.style.pointerEvents = 'auto';
+      replyBtn.style.color = '#0d8db0';
+      replyBtn.style.cursor = 'pointer';
+    }
+  };
+
+  async function checkForLike(userID, postID) {
+    const docRef = doc(
+      db,
+      'profiles',
+      userID,
+      'posts',
+      postID,
+      'liked',
+      `${getUID()}`
+    );
+    const snap = await getDoc(docRef);
+    return snap.exists();
+  }
+
+  async function addLikes() {
+    const cards = document.querySelectorAll('.content-card');
+    cards.forEach((card) => {
+      const userID = card.dataset.profile;
+      const heart = card.childNodes[5].childNodes[1].children[0];
+      const result = checkForLike(userID, card.id);
+      result.then((value) => {
+        if (value) {
+          heart.dataset.liked = 'true';
+          heart.style.backgroundColor = 'red';
+        }
+      });
+    });
+  }
+
+  const showNotes = (notes) => {
+    if (notes === 0 || notes === undefined) {
+      return `0 notes`;
+    }
+    if (notes === 1) {
+      return `${notes} note`;
+    }
+    return `${notes} notes`;
+  };
+
+  const getUserName = () => getAuth().currentUser.displayName;
+  const getPicture = () => getAuth().currentUser.photoURL;
+  const getUID = () => getAuth().currentUser.uid;
+
+  async function writeComment(event) {
+    console.log(event.target.parentNode.parentNode.parentNode.parentNode.id);
+    const postID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+    const userID =
+      event.target.parentNode.parentNode.parentNode.parentNode.dataset.profile;
+    const comment = document.getElementById(`input-${postID}`).value;
+    const postsRef = doc(db, 'profiles', userID, 'posts', postID);
+
+    try {
+      await addDoc(collection(postsRef, 'comments'), {
+        name: getUserName(),
+        photoURL: getPicture(),
+        comment,
+        uid: getUID(),
+        time: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error('Error writing new message to Firebase Database', error);
+    }
+    document.getElementById(`input-${postID}`).value = '';
+  }
+
+  const showCommentSection = (event) => {
+    const postID = event.target.id;
+    const index = postID.indexOf('-');
+    const ref = postID.slice(index + 1);
+    const commentSection = document.getElementById(`comments-${ref}`);
+
+    if (commentSection.style.display === 'flex') {
+      commentSection.style.display = 'none';
+    } else {
+      fetchComments(event);
+      commentSection.style.display = 'flex';
+    }
+  };
+
+  const showComments = () => {
+    let currentComments = comments;
+    document.querySelectorAll('.comments-loading-icon').forEach((icon) => {
+      icon.style.display = 'none';
+    });
+    if (currentComments) {
+      return (
+        <div id="fetched-comments">
+          {comments.map((post, index) => (
+            <div className="content-card-comment" key={index}>
+              <Link to={`/profile/${post.uid}`} onClick={() => window.reload()}>
+                <img
+                  className="profile-picture"
+                  src={post.photoURL ? post.photoURL : placeholderSmall}
+                  alt=""
+                />
+              </Link>
+              <div className="content-card-comment-caption">{post.comment}</div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+  };
+
   const showPosts = () => {
     if (userPosts) {
       return (
         <div className="">
           {userPosts.map((post, index) => (
-            <div className="content-card" key={index} id={index}>
+            <div
+              className="content-card"
+              key={index}
+              id={post.id}
+              data-profile={post.userID}
+            >
               <div className="content-card-header">
                 <div className="content-card-header-profile-info">
                   <img
@@ -138,40 +399,51 @@ function Explore(props) {
               <div className="content-card-title">{post.title}</div>
               <div className="content-card-caption">{post.caption}</div>
               <div className="content-card-hashtags">
-                {/* {showHashtags(post.hashtags)} */}
+                {showHashtags(post.hashtags)}
               </div>
               <div className="content-card-footer">
                 <div className="content-card-notes">
-                  {/* {showNotes(post.notes)}{' '} */}
+                  {showNotes(post.notes)}{' '}
                 </div>
                 <div className="content-card-footer-icon-container">
                   <img
                     className="content-card-footer-icon"
                     alt="heart icon"
                     src={heart}
+                    data-profile={post.userID}
                     data-liked="false"
-                    // onClick={handleLike}
+                    onClick={handleLike}
                   />
 
                   <img
                     className="content-card-footer-icon"
                     alt="comments icon"
                     src={chat}
-                    // onClick={showCommentSection}
+                    id={`chat-${post.id}`}
+                    onClick={showCommentSection}
+                    data-profile={post.userID}
                   />
                 </div>
               </div>
-              <div className="content-card-comment-section">
+              <div
+                className="content-card-comment-section"
+                id={`comments-${post.id}`}
+              >
                 <div className="content-card-comment">
                   <img
                     className="profile-picture"
-                    // src={getAuth().currentUser.photoURL}
+                    src={
+                      getAuth().currentUser.photoURL
+                        ? getAuth().currentUser.photoURL
+                        : placeholderSmall
+                    }
                     alt=""
                   />
                   <div className="content-card-comment-input-container">
                     <textarea
                       className="content-card-comment-input"
-                      // onChange={checkCommentLength}
+                      onChange={checkCommentLength}
+                      id={`input-${post.id}`}
                       type="text"
                       minLength="1"
                       maxLength="459"
@@ -181,14 +453,14 @@ function Explore(props) {
                     ></textarea>
                     <button
                       className="content-card-comment-reply-button"
-                      // onClick={writeComment}
+                      onClick={writeComment}
                     >
                       Reply
                     </button>
                   </div>
                 </div>
                 <img src={loading} className="comments-loading-icon" alt="" />
-                {/* {showComments()} */}
+                {showComments()}
                 <div className="load-more-comments-button">
                   {/* <button onClick={fetchMoreComments}>
                     Load more comments

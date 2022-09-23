@@ -43,7 +43,7 @@ const Navbar = () => {
         <Link
           to={`/profile/${getAuth().currentUser.uid}`}
           style={{ display: 'flex' }}
-          onClick={() => window.reload()}
+          // onClick={() => window.location.reload()}
         >
           <button className="navbar-icon-button">
             <img className="Navbar-icon" src={user} alt="Profile page" />

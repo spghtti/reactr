@@ -52,6 +52,7 @@ const Profile = (props) => {
 
     result.forEach((doc) => {
       allPosts.push(doc.data());
+
       allPosts[allPosts.length - 1].id = doc.id;
     });
     setUserPosts(allPosts);
@@ -209,17 +210,17 @@ const Profile = (props) => {
     } catch (error) {
       console.error('Error writing new message to Firebase Database', error);
     }
-    // document.getElementById(`input-${postID}`).value = '';
+    document.getElementById(`input-${postID}`).value = '';
   }
 
   const checkCommentLength = (event) => {
     const replyBtn = event.target.parentNode.lastChild;
     if (event.target.value === '') {
-      replyBtn.setAttribute('disabled');
+      replyBtn.style.pointerEvents = 'none';
       replyBtn.style.color = 'gray';
       replyBtn.style.cursor = 'not-allowed';
     } else {
-      replyBtn.removeAttribute('disabled');
+      replyBtn.style.pointerEvents = 'auto';
       replyBtn.style.color = '#0d8db0';
       replyBtn.style.cursor = 'pointer';
     }
@@ -231,23 +232,23 @@ const Profile = (props) => {
 
     loadingIcon.style.display = 'flex';
     const postID = event.target.parentNode.parentNode.parentNode.id;
-    console.log(`PostID: ${postID}`);
     hideOtherCommentSections(postID);
-    console.log(`ProfileID: ${id}`);
+    // const result = await getDocs(
+    //   collection(doc(db, 'profiles', id, 'posts', postID), 'comments'),
+    //   orderBy('time'),
+    //   limit(2)
+    // );
     const commentsRef = collection(
       db,
       `/profiles/${id}/posts/${postID}/comments`
     );
-
-    const result = await getDocs(
-      collection(doc(db, 'profiles', id, 'posts', postID), 'comments')
-    );
+    const q = query(commentsRef, orderBy('time'), limit(3));
+    const result = await getDocs(q);
     const lastVisible = result.docs[result.docs.length - 1];
 
     const allComments = [];
 
     result.forEach((doc) => {
-      console.log(doc.data());
       allComments.push(doc.data());
       allComments[allComments.length - 1].id = doc.id;
     });
@@ -325,17 +326,30 @@ const Profile = (props) => {
     }
   };
 
+  const incrementNote = (node, amount) => {
+    const text = node.innerText;
+    let num = Number(text.slice(0, text.indexOf(' '))) + amount;
+    if (num === 1) {
+      node.innerText = '1 note';
+    } else {
+      node.innerText = `${num} notes`;
+    }
+  };
+
   async function handleLike(event) {
     const postID = event.target.parentNode.parentNode.parentNode.id;
+    const notes = event.target.parentNode.parentNode.childNodes[0];
 
     if (event.target.dataset.liked === 'true') {
       removeNote(postID);
       event.target.dataset.liked = 'false';
       event.target.style.background = 'none';
+      incrementNote(notes, -1);
     } else if (event.target.dataset.liked === 'false') {
       addNote(postID);
       event.target.dataset.liked = 'true';
       event.target.style.backgroundColor = 'red';
+      incrementNote(notes, 1);
     }
   }
 
@@ -344,7 +358,7 @@ const Profile = (props) => {
       return '';
     } else {
       const hashtags = [];
-      arr.forEach((hashtag) => hashtags.push(`${hashtag} `));
+      arr.forEach((hashtag) => hashtags.push(`#${hashtag} `));
       return hashtags;
     }
   };
