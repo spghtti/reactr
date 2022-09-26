@@ -25,6 +25,7 @@ body {
 .Explore-trending-title {
   color: white;
   font-size: 1.5em;
+  margin-bottom: 10px;
 }
 .Explore-cards-container {
   width: 100%;
@@ -45,8 +46,7 @@ body {
   margin-bottom: 5%;
 }
 .Explore-trending-title,
-.Explore-trending-cards,
-.Explore-featured {
+.Explore-trending-cards {
   margin-left: 5%;
 }
 .Explore-trend-card {
@@ -105,7 +105,7 @@ body {
   height: auto;
   width: 100%;
   display: flex;
-  justify-content: left;
+  justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
   flex: 1;
@@ -192,12 +192,8 @@ body {
     flex-basis: 90%;
   }
 }
-.test {
-  position: absolute;
-  width: 100vw;
-  height: 25vh;
-  top: 0;
-  left: 0;
-  color: black;
-  background: pink;
+.load-more-button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }

@@ -201,22 +201,24 @@ function Explore(props) {
   };
 
   async function handleLike(event) {
-    const postID = event.target.parentNode.parentNode.parentNode.id;
-    const userID =
-      event.target.parentNode.parentNode.parentNode.dataset.profile;
-    const notes = event.target.parentNode.parentNode.childNodes[0];
+    if (getAuth().currentUser) {
+      const postID = event.target.parentNode.parentNode.parentNode.id;
+      const userID =
+        event.target.parentNode.parentNode.parentNode.dataset.profile;
+      const notes = event.target.parentNode.parentNode.childNodes[0];
 
-    if (event.target.dataset.liked === 'true') {
-      removeNote(userID, postID);
-      event.target.dataset.liked = 'false';
-      event.target.style.background = 'none';
-      incrementNote(notes, -1);
-    } else if (event.target.dataset.liked === 'false') {
-      addNote(userID, postID);
-      event.target.dataset.liked = 'true';
-      event.target.style.backgroundColor = 'red';
-      incrementNote(notes, 1);
-    }
+      if (event.target.dataset.liked === 'true') {
+        removeNote(userID, postID);
+        event.target.dataset.liked = 'false';
+        event.target.style.background = 'none';
+        incrementNote(notes, -1);
+      } else if (event.target.dataset.liked === 'false') {
+        addNote(userID, postID);
+        event.target.dataset.liked = 'true';
+        event.target.style.backgroundColor = 'red';
+        incrementNote(notes, 1);
+      }
+    } else openModal();
   }
 
   async function fetchComments(event) {
@@ -241,6 +243,47 @@ function Explore(props) {
 
     result.forEach((doc) => {
       console.log(doc.data());
+      allComments.push(doc.data());
+      allComments[allComments.length - 1].id = doc.id;
+    });
+    setComments(allComments);
+    setLastComment(lastVisible);
+  }
+
+  async function fetchMoreComments(event) {
+    const commentSectionLength =
+      event.target.parentNode.parentNode.children[2].children.length;
+    if (commentSectionLength === 0) {
+      event.target.style.display = 'none';
+      return;
+    }
+    const userID =
+      event.target.parentNode.parentNode.parentNode.dataset.profile;
+    const postID = event.target.parentNode.parentNode.parentNode.id;
+    const commentsRef = collection(
+      db,
+      `/profiles/${userID}/posts/${postID}/comments`
+    );
+    const q = query(
+      commentsRef,
+      orderBy('time'),
+      limit(3),
+      startAfter(lastComment)
+    );
+
+    const allComments = [...comments];
+    const result = await getDocs(q);
+
+    if (result.size === 0) {
+      event.target.display = 'none';
+    }
+
+    const lastVisible = result.docs[result.docs.length - 1];
+
+    if (result.size === 0)
+      event.target.parentNode.lastChild.style.display = 'none';
+
+    result.forEach((doc) => {
       allComments.push(doc.data());
       allComments[allComments.length - 1].id = doc.id;
     });
@@ -290,6 +333,36 @@ function Explore(props) {
     });
   }
 
+  const showUserComment = (id) => {
+    return (
+      <div>
+        <img
+          className="profile-picture"
+          src={getAuth().currentUser.photoURL}
+          alt=""
+        />
+        <div className="content-card-comment-input-container">
+          <textarea
+            className="content-card-comment-input"
+            onChange={checkCommentLength}
+            id={`input-${id}`}
+            type="text"
+            minLength="1"
+            maxLength="459"
+            placeholder="Leave a comment"
+            wrap="wrap"
+            rows="1"
+          ></textarea>
+          <button
+            className="content-card-comment-reply-button"
+            onClick={writeComment}
+          >
+            Reply
+          </button>
+        </div>
+      </div>
+    );
+  };
   const showNotes = (notes) => {
     if (notes === 0 || notes === undefined) {
       return `0 notes`;
@@ -326,6 +399,12 @@ function Explore(props) {
     document.getElementById(`input-${postID}`).value = '';
   }
 
+  const openModal = () => {
+    document.body.style.overflowY = 'hidden';
+    document.querySelector('.login-modal-container').style.display = 'flex';
+    document.getElementById('initial-login-modal').style.display = 'flex';
+  };
+
   const showCommentSection = (event) => {
     const postID = event.target.id;
     const index = postID.indexOf('-');
@@ -351,11 +430,7 @@ function Explore(props) {
           {comments.map((post, index) => (
             <div className="content-card-comment" key={index}>
               <Link to={`/profile/${post.uid}`} onClick={() => window.reload()}>
-                <img
-                  className="profile-picture"
-                  src={post.photoURL ? post.photoURL : placeholderSmall}
-                  alt=""
-                />
+                <img className="profile-picture" src={post.photoURL} alt="" />
               </Link>
               <div className="content-card-comment-caption">{post.comment}</div>
             </div>
@@ -430,41 +505,14 @@ function Explore(props) {
                 id={`comments-${post.id}`}
               >
                 <div className="content-card-comment">
-                  <img
-                    className="profile-picture"
-                    src={
-                      getAuth().currentUser.photoURL
-                        ? getAuth().currentUser.photoURL
-                        : placeholderSmall
-                    }
-                    alt=""
-                  />
-                  <div className="content-card-comment-input-container">
-                    <textarea
-                      className="content-card-comment-input"
-                      onChange={checkCommentLength}
-                      id={`input-${post.id}`}
-                      type="text"
-                      minLength="1"
-                      maxLength="459"
-                      placeholder="Leave a comment"
-                      wrap="wrap"
-                      rows="1"
-                    ></textarea>
-                    <button
-                      className="content-card-comment-reply-button"
-                      onClick={writeComment}
-                    >
-                      Reply
-                    </button>
-                  </div>
+                  {getAuth.currentUser ? showUserComment(post.id) : ''}
                 </div>
                 <img src={loading} className="comments-loading-icon" alt="" />
                 {showComments()}
                 <div className="load-more-comments-button">
-                  {/* <button onClick={fetchMoreComments}>
+                  <button onClick={fetchMoreComments}>
                     Load more comments
-                  </button> */}
+                  </button>
                 </div>
               </div>
             </div>
@@ -545,7 +593,9 @@ function Explore(props) {
             </button>
           </div>
         </div>
-        <div className="Explore-sidebar-container">Sidebar</div>
+        <div className="Explore-sidebar-container">
+          <h2>Check out these blogs</h2>
+        </div>
       </div>
     </div>
   );
