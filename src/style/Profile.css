@@ -1,7 +1,6 @@
 body {
   background-color: rgb(0, 25, 53);
 }
-
 .profile-page {
   position: absolute;
   background-color: rgb(0, 25, 53);
@@ -23,8 +22,8 @@ body {
 }
 .content-card {
   background-color: #ffffff;
-  width: 540px;
-  min-height: auto;
+  min-width: 340px;
+  max-width: 540px;
   max-height: 1100px;
   border-radius: 5px;
 }

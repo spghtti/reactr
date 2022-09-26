@@ -535,50 +535,52 @@ function Explore(props) {
       </header>
       <div className="Explore-content">
         <div className="Explore-cards-container">
-          <h2 className="Explore-trending-title">Trending 🚀</h2>
-          <div className="Explore-trending-cards">
-            <div className="Explore-trend-card" id="hashtag-trend-one">
-              <div className="Explore-trend-hashtag-info">
-                <div
-                  className="Explore-trend-hashtag-number"
-                  id="hashtag-trend-one-number"
-                >
-                  1
+          <div className="Explore-trending-container">
+            <h2 className="Explore-trending-title">Trending 🚀</h2>
+            <div className="Explore-trending-cards">
+              <div className="Explore-trend-card" id="hashtag-trend-one">
+                <div className="Explore-trend-hashtag-info">
+                  <div
+                    className="Explore-trend-hashtag-number"
+                    id="hashtag-trend-one-number"
+                  >
+                    1
+                  </div>
+                  <h3 className="Explore-trend-hashtag-headline">Trend</h3>
                 </div>
-                <h3 className="Explore-trend-hashtag-headline">Trend</h3>
               </div>
-            </div>
-            <div className="Explore-trend-card" id="hashtag-trend-two">
-              <div className="Explore-trend-hashtag-info">
-                <div
-                  className="Explore-trend-hashtag-number"
-                  id="hashtag-trend-two-number"
-                >
-                  2
+              <div className="Explore-trend-card" id="hashtag-trend-two">
+                <div className="Explore-trend-hashtag-info">
+                  <div
+                    className="Explore-trend-hashtag-number"
+                    id="hashtag-trend-two-number"
+                  >
+                    2
+                  </div>
+                  <h3 className="Explore-trend-hashtag-headline">Trend</h3>
                 </div>
-                <h3 className="Explore-trend-hashtag-headline">Trend</h3>
               </div>
-            </div>
-            <div className="Explore-trend-card" id="hashtag-trend-three">
-              <div className="Explore-trend-hashtag-info">
-                <div
-                  className="Explore-trend-hashtag-number"
-                  id="hashtag-trend-three-number"
-                >
-                  3
+              <div className="Explore-trend-card" id="hashtag-trend-three">
+                <div className="Explore-trend-hashtag-info">
+                  <div
+                    className="Explore-trend-hashtag-number"
+                    id="hashtag-trend-three-number"
+                  >
+                    3
+                  </div>
+                  <h3 className="Explore-trend-hashtag-headline">Trend</h3>
                 </div>
-                <h3 className="Explore-trend-hashtag-headline">Trend</h3>
               </div>
-            </div>
-            <div className="Explore-trend-card" id="hashtag-trend-four">
-              <div className="Explore-trend-hashtag-info">
-                <div
-                  className="Explore-trend-hashtag-number"
-                  id="hashtag-trend-four-number"
-                >
-                  4
+              <div className="Explore-trend-card" id="hashtag-trend-four">
+                <div className="Explore-trend-hashtag-info">
+                  <div
+                    className="Explore-trend-hashtag-number"
+                    id="hashtag-trend-four-number"
+                  >
+                    4
+                  </div>
+                  <h3 className="Explore-trend-hashtag-headline">Trend</h3>
                 </div>
-                <h3 className="Explore-trend-hashtag-headline">Trend</h3>
               </div>
             </div>
           </div>
@@ -594,7 +596,33 @@ function Explore(props) {
           </div>
         </div>
         <div className="Explore-sidebar-container">
-          <h2>Check out these blogs</h2>
+          <div className="sidebar-container">
+            <h2 className="Explore-sidebar-container-headline">
+              Check out these blogs
+            </h2>
+            <div className="featured-profile">
+              <div className="featured-profile-picture">
+                <img src="#" alt="" />
+              </div>
+              <div className="featured-profile-info">
+                <span>Spghtti</span>
+                <span>I created this!</span>
+              </div>
+            </div>
+          </div>
+          <footer className="sidebar-footer">
+            <ul>
+              <li>
+                <a
+                  href="https://github.com/spghtti"
+                  alt="Github link"
+                  className=".Explore-l"
+                >
+                  Github
+                </a>
+              </li>
+            </ul>
+          </footer>
         </div>
       </div>
     </div>

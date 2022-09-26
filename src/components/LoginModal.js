@@ -105,11 +105,28 @@ const LoginModal = (props) => {
     document.querySelector('.login-modal-container').style.display = 'none';
   }
 
+  const isValidHttpUrl = (string) => {
+    let url;
+
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;
+    }
+
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  };
+
   const createAccount = (event) => {
     event.preventDefault();
     const emailAddress = document.getElementById('email-input').value;
     const userName = document.getElementById('set-username-input').value;
-    const profilePicture = document.getElementById('set-pfp-input').value;
+    let profilePicture = document.getElementById('set-pfp-input').value;
+
+    if (!isValidHttpUrl(profilePicture)) {
+      profilePicture =
+        'https://thumbs.dreamstime.com/t/default-male-avatar-profile-picture-icon-grey-man-photo-placeholder-vector-illustration-88414414.jpg';
+    }
     const password = document.getElementById('set-password-input').value;
     createUserWithEmailAndPassword(auth, emailAddress, password)
       .then(() => {
