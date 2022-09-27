@@ -585,11 +585,7 @@ function Explore(props) {
               </div>
             </div>
           </div>
-          <div className="Explore-featured">
-            {/* <div className="Explore-featured-column">
-              <div className="Explore-featured-card"></div> */}
-            {userPosts ? showPosts() : ''}
-          </div>
+          <div className="Explore-featured">{userPosts ? showPosts() : ''}</div>
           <div className="load-more-button-container">
             <button onClick={loadMorePosts} className="load-more-button">
               Load more
