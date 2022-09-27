@@ -536,8 +536,9 @@ function Explore(props) {
       <div className="Explore-content">
         <div className="Explore-cards-container">
           <div className="Explore-trending-container">
-            <h2 className="Explore-trending-title">Trending 🚀</h2>
             <div className="Explore-trending-cards">
+              <h2 className="Explore-trending-title">Trending 🚀</h2>
+
               <div className="Explore-trend-card" id="hashtag-trend-one">
                 <div className="Explore-trend-hashtag-info">
                   <div
@@ -602,11 +603,17 @@ function Explore(props) {
             </h2>
             <div className="featured-profile">
               <div className="featured-profile-picture">
-                <img src="#" alt="" />
+                <img
+                  src="https://avatars.githubusercontent.com/u/2266075?v=4"
+                  alt=""
+                  className="profile-picture"
+                />
               </div>
               <div className="featured-profile-info">
-                <span>Spghtti</span>
-                <span>I created this!</span>
+                <Link to={`profile/ZHdGiTZnIiPEOktJnqDcFFqgs1y2`}>
+                  <span id="featured-username">Spghtti</span>
+                </Link>
+                <span id="featured-profile-description">I created this!</span>
               </div>
             </div>
           </div>

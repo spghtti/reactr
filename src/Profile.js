@@ -120,17 +120,19 @@ const Profile = (props) => {
   }
 
   async function addLikes() {
-    const cards = document.querySelectorAll('.content-card');
-    cards.forEach((card) => {
-      const heart = card.childNodes[5].childNodes[1].children[0];
-      const result = checkForLike(card.id);
-      result.then((value) => {
-        if (value) {
-          heart.dataset.liked = 'true';
-          heart.style.backgroundColor = 'red';
-        }
+    if (getAuth().currentUser) {
+      const cards = document.querySelectorAll('.content-card');
+      cards.forEach((card) => {
+        const heart = card.childNodes[5].childNodes[1].children[0];
+        const result = checkForLike(card.id);
+        result.then((value) => {
+          if (value) {
+            heart.dataset.liked = 'true';
+            heart.style.backgroundColor = 'red';
+          }
+        });
       });
-    });
+    }
   }
 
   async function addNote(postID) {
@@ -362,6 +364,36 @@ const Profile = (props) => {
       return hashtags;
     }
   };
+  const showUserComment = (id) => {
+    return (
+      <div>
+        <img
+          className="profile-picture"
+          src={getAuth().currentUser.photoURL}
+          alt=""
+        />
+        <div className="content-card-comment-input-container">
+          <textarea
+            className="content-card-comment-input"
+            onChange={checkCommentLength}
+            id={`input-${id}`}
+            type="text"
+            minLength="1"
+            maxLength="459"
+            placeholder="Leave a comment"
+            wrap="wrap"
+            rows="1"
+          ></textarea>
+          <button
+            className="content-card-comment-reply-button"
+            onClick={writeComment}
+          >
+            Reply
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   const showPosts = () => {
     let currentPosts = userPosts;
@@ -394,7 +426,6 @@ const Profile = (props) => {
               <div className="content-card-caption">{post.caption}</div>
               <div className="content-card-hashtags">
                 {showHashtags(post.hashtags)}
-                {/* {post.hashtags} */}
               </div>
               <div className="content-card-footer">
                 <div className="content-card-notes">
