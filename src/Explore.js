@@ -242,7 +242,6 @@ function Explore(props) {
     const allComments = [];
 
     result.forEach((doc) => {
-      console.log(doc.data());
       allComments.push(doc.data());
       allComments[allComments.length - 1].id = doc.id;
     });
@@ -335,7 +334,7 @@ function Explore(props) {
 
   const showUserComment = (id) => {
     return (
-      <div>
+      <div className="content-card-comment">
         <img
           className="profile-picture"
           src={getAuth().currentUser.photoURL}
@@ -378,7 +377,6 @@ function Explore(props) {
   const getUID = () => getAuth().currentUser.uid;
 
   async function writeComment(event) {
-    console.log(event.target.parentNode.parentNode.parentNode.parentNode.id);
     const postID = event.target.parentNode.parentNode.parentNode.parentNode.id;
     const userID =
       event.target.parentNode.parentNode.parentNode.parentNode.dataset.profile;
@@ -504,9 +502,8 @@ function Explore(props) {
                 className="content-card-comment-section"
                 id={`comments-${post.id}`}
               >
-                <div className="content-card-comment">
-                  {getAuth.currentUser ? showUserComment(post.id) : ''}
-                </div>
+                {getAuth().currentUser ? showUserComment(post.id) : ''}
+
                 <img src={loading} className="comments-loading-icon" alt="" />
                 {showComments()}
                 <div className="load-more-comments-button">

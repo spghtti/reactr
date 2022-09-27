@@ -339,20 +339,22 @@ const Profile = (props) => {
   };
 
   async function handleLike(event) {
-    const postID = event.target.parentNode.parentNode.parentNode.id;
-    const notes = event.target.parentNode.parentNode.childNodes[0];
+    if (getAuth().currentUser) {
+      const postID = event.target.parentNode.parentNode.parentNode.id;
+      const notes = event.target.parentNode.parentNode.childNodes[0];
 
-    if (event.target.dataset.liked === 'true') {
-      removeNote(postID);
-      event.target.dataset.liked = 'false';
-      event.target.style.background = 'none';
-      incrementNote(notes, -1);
-    } else if (event.target.dataset.liked === 'false') {
-      addNote(postID);
-      event.target.dataset.liked = 'true';
-      event.target.style.backgroundColor = 'red';
-      incrementNote(notes, 1);
-    }
+      if (event.target.dataset.liked === 'true') {
+        removeNote(postID);
+        event.target.dataset.liked = 'false';
+        event.target.style.background = 'none';
+        incrementNote(notes, -1);
+      } else if (event.target.dataset.liked === 'false') {
+        addNote(postID);
+        event.target.dataset.liked = 'true';
+        event.target.style.backgroundColor = 'red';
+        incrementNote(notes, 1);
+      }
+    } else openModal();
   }
 
   const showHashtags = (arr) => {
@@ -364,9 +366,17 @@ const Profile = (props) => {
       return hashtags;
     }
   };
+
+  const openModal = () => {
+    document.body.style.overflowY = 'hidden';
+    document.querySelector('.login-modal-container').style.display = 'flex';
+    document.getElementById('initial-login-modal').style.display = 'flex';
+  };
+
   const showUserComment = (id) => {
+    console.log('TRUE');
     return (
-      <div>
+      <div className="content-card-comment">
         <img
           className="profile-picture"
           src={getAuth().currentUser.photoURL}
@@ -453,32 +463,8 @@ const Profile = (props) => {
                 className="content-card-comment-section"
                 id={`comments-${post.id}`}
               >
-                <div className="content-card-comment">
-                  <img
-                    className="profile-picture"
-                    src={getAuth().currentUser.photoURL}
-                    alt=""
-                  />
-                  <div className="content-card-comment-input-container">
-                    <textarea
-                      className="content-card-comment-input"
-                      id={`input-${post.id}`}
-                      onChange={checkCommentLength}
-                      type="text"
-                      minLength="1"
-                      maxLength="459"
-                      placeholder="Leave a comment"
-                      wrap="wrap"
-                      rows="1"
-                    ></textarea>
-                    <button
-                      className="content-card-comment-reply-button"
-                      onClick={writeComment}
-                    >
-                      Reply
-                    </button>
-                  </div>
-                </div>
+                {getAuth().currentUser ? showUserComment(post.id) : ''}
+
                 <img src={loading} className="comments-loading-icon" alt="" />
                 {showComments()}
                 <div className="load-more-comments-button">
