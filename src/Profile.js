@@ -362,7 +362,11 @@ const Profile = (props) => {
       return '';
     } else {
       const hashtags = [];
-      arr.forEach((hashtag) => hashtags.push(`#${hashtag} `));
+      arr.forEach((hashtag) => {
+        hashtag[0] === '#'
+          ? hashtags.push(`${hashtag} `)
+          : hashtags.push(`#${hashtag}`);
+      });
       return hashtags;
     }
   };

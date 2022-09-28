@@ -4,6 +4,10 @@ import { getAuth } from 'firebase/auth';
 import {
   addDoc,
   setDoc,
+  getDocs,
+  query,
+  orderBy,
+  limit,
   collection,
   serverTimestamp,
   doc,
@@ -52,6 +56,16 @@ const getHashtags = (str) => {
   return newArr;
 };
 
+async function createExploreRef(profileRef) {
+  const postsRef = collection(profileRef, 'posts');
+  const q = query(postsRef, orderBy('time', 'desc'), limit(1));
+  const result = await getDocs(q);
+
+  result.forEach((doc) => {
+    console.log(doc.data());
+  });
+}
+
 async function writePost(event) {
   event.preventDefault();
   const title = document.getElementById(
@@ -83,6 +97,7 @@ async function writePost(event) {
   } catch (error) {
     console.error('Error writing new message to Firebase Database', error);
   }
+  createExploreRef(profileRef);
   closePostModal(event);
 }
 
