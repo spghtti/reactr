@@ -68,9 +68,11 @@ function Explore(props) {
     for (const key of postKeys) {
       const docRef = doc(db, 'profiles', key[0], 'posts', key[1]);
       const result = await getDoc(docRef);
-      array.push(result.data());
-      array[array.length - 1].userID = key[0];
-      array[array.length - 1].id = key[1];
+      if (result.data()) {
+        array.push(result.data());
+        array[array.length - 1].userID = key[0];
+        array[array.length - 1].id = key[1];
+      }
     }
     setUserPosts(array);
   }
