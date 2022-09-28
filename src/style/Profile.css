@@ -22,8 +22,7 @@ body {
 }
 .content-card {
   background-color: #ffffff;
-  min-width: 340px;
-  max-width: 540px;
+  width: 540px;
   max-height: 1100px;
   border-radius: 5px;
 }
