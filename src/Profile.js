@@ -365,7 +365,7 @@ const Profile = (props) => {
       arr.forEach((hashtag) => {
         hashtag[0] === '#'
           ? hashtags.push(`${hashtag} `)
-          : hashtags.push(`#${hashtag}`);
+          : hashtags.push(`#${hashtag} `);
       });
       return hashtags;
     }
