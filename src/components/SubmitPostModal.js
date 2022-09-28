@@ -3,7 +3,6 @@ import '../style/SubmitPostModal.css';
 import { getAuth } from 'firebase/auth';
 import {
   addDoc,
-  setDoc,
   getDocs,
   query,
   orderBy,
@@ -44,6 +43,7 @@ const getProfPhoto = () => {
 };
 
 const getHashtags = (str) => {
+  if (str.length === 0) return '';
   const splitString = str.split(' ');
   const newArr = [];
   splitString.forEach((word) => {
@@ -56,13 +56,24 @@ const getHashtags = (str) => {
   return newArr;
 };
 
+async function pushToFeatured(path) {
+  console.log('FLAG');
+  try {
+    await addDoc(collection(db, 'featured'), {
+      reference: doc(db, path),
+      time: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error('Error pushing featured post to Firebase Database', error);
+  }
+}
+
 async function createExploreRef(profileRef) {
   const postsRef = collection(profileRef, 'posts');
   const q = query(postsRef, orderBy('time', 'desc'), limit(1));
   const result = await getDocs(q);
-
   result.forEach((doc) => {
-    console.log(doc.data());
+    pushToFeatured(doc.ref.path);
   });
 }
 
@@ -77,6 +88,7 @@ async function writePost(event) {
   const caption = document.getElementById(
     'submit-post-modal-form-input-caption'
   ).value;
+
   const hashtags = getHashtags(
     document.getElementById('submit-post-modal-form-input-hashtags').value
   );

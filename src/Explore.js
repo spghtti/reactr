@@ -114,7 +114,7 @@ function Explore(props) {
   }
 
   const showHashtags = (arr) => {
-    if (arr === undefined) {
+    if (arr === undefined || arr.length === 0) {
       return '';
     } else {
       const hashtags = [];
