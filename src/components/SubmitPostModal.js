@@ -13,6 +13,13 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase';
 
+const showTemporarily = (target, seconds) => {
+  target.style.display = 'flex';
+  setTimeout(() => {
+    target.style.display = 'none';
+  }, seconds * 1000);
+};
+
 const clickOffModal = (event) => {
   document.body.style.overflowY = 'auto';
   document.getElementById('submit-post-modal-form').reset();
@@ -76,9 +83,7 @@ async function createExploreRef(profileRef) {
     pushToFeatured(doc.ref.path);
   });
 }
-
 async function writePost(event) {
-  event.preventDefault();
   const title = document.getElementById(
     'submit-post-modal-form-input-title'
   ).value;
@@ -113,6 +118,27 @@ async function writePost(event) {
   closePostModal(event);
 }
 
+const handleSubmit = (event) => {
+  event.preventDefault();
+
+  const caption = document.getElementById(
+    'submit-post-modal-form-input-caption'
+  ).value;
+  const title = document.getElementById(
+    'submit-post-modal-form-input-title'
+  ).value;
+  const photoURL = document.getElementById(
+    'submit-post-modal-form-input-link'
+  ).value;
+  const error = document.getElementById('submit-post-error');
+
+  if (caption.length === 0 && title.length === 0 && photoURL.length === 0) {
+    showTemporarily(error, 3);
+  } else {
+    writePost(event);
+  }
+};
+
 const SubmitPostModal = () => {
   const auth = getAuth();
   return (
@@ -138,6 +164,7 @@ const SubmitPostModal = () => {
             placeholder="Go ahead, put anything"
             className="submit-post-modal-form-input"
             id="submit-post-modal-form-input-caption"
+            minLength="2"
             wrap="wrap"
           ></textarea>
           <textarea
@@ -146,10 +173,13 @@ const SubmitPostModal = () => {
             id="submit-post-modal-form-input-hashtags"
             wrap="wrap"
           ></textarea>
+          <div id="submit-post-error">
+            You must include a title, image, or caption
+          </div>
           <input
             type="submit"
             value="Post now"
-            onClick={writePost}
+            onClick={handleSubmit}
             id="submit-post-button"
           />
           <button onClick={closePostModal} id="close-post-button">

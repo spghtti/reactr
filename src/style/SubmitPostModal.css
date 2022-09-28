@@ -79,3 +79,8 @@
   cursor: pointer;
   text-decoration: underline;
 }
+#submit-post-error {
+  display: none;
+  color: red;
+  margin: 5px;
+}
