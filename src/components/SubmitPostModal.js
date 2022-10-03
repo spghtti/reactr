@@ -3,13 +3,17 @@ import '../style/SubmitPostModal.css';
 import { getAuth } from 'firebase/auth';
 import {
   addDoc,
+  doc,
+  updateDoc,
+  Timestamp,
   getDocs,
   query,
   orderBy,
+  DocumentReference,
   limit,
   collection,
   serverTimestamp,
-  doc,
+  where,
 } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -54,14 +58,56 @@ const getHashtags = (str) => {
   const splitString = str.split(' ');
   const newArr = [];
   splitString.forEach((word) => {
-    if (word[0] !== '#') {
-      newArr.push('#' + word);
+    if (word[0] === '#') {
+      newArr.push(word.slice(1));
     } else {
       newArr.push(word);
     }
   });
   return newArr;
 };
+
+const calcTrendingScore = (notes, daysOld) => 3 * notes * (0.9 ^ daysOld);
+
+const calculateDaysDifference = (firstDate, secondDate) => {
+  const difference = secondDate - firstDate;
+  return Math.ceil(Math.abs(difference / (1000 * 3600 * 24)));
+};
+
+async function updateHashtag(ref, data) {
+  await updateDoc(ref, {
+    time: serverTimestamp(),
+    trendingScore: calcTrendingScore(
+      data.notes,
+      calculateDaysDifference(data.time.toMillis(), Timestamp.now().toMillis())
+    ),
+  });
+}
+
+async function writeHashtagsToTrending(hashtags) {
+  for (let index in hashtags) {
+    const q = query(
+      collection(db, 'trending-hashtags'),
+      where('hashtag', '==', hashtags[index])
+    );
+    const snap = await getDocs(q);
+
+    if (snap.size > 0) {
+      snap.forEach((document) => {
+        const ref = new DocumentReference(document);
+        const docID = ref.firestore._key.path.segments[6];
+        const docRef = doc(db, 'trending-hashtags', docID);
+        updateHashtag(docRef, document.data());
+      });
+    } else {
+      await addDoc(collection(db, 'trending-hashtags'), {
+        hashtag: hashtags[index],
+        time: serverTimestamp(),
+        notes: 1,
+      });
+    }
+  }
+}
 
 async function pushToFeatured(path) {
   console.log('FLAG');
@@ -83,6 +129,7 @@ async function createExploreRef(profileRef) {
     pushToFeatured(doc.ref.path);
   });
 }
+
 async function writePost(event) {
   const title = document.getElementById(
     'submit-post-modal-form-input-title'
@@ -114,7 +161,9 @@ async function writePost(event) {
   } catch (error) {
     console.error('Error writing new message to Firebase Database', error);
   }
-  createExploreRef(profileRef);
+  writeHashtagsToTrending(hashtags);
+  // UNCOMMENT THIS ONCE TRENDING HASHTAGS IS SOLVED
+  // createExploreRef(profileRef);
   closePostModal(event);
 }
 
