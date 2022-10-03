@@ -106,17 +106,19 @@ const Profile = (props) => {
   };
 
   async function checkForLike(postID) {
-    const docRef = doc(
-      db,
-      'profiles',
-      id,
-      'posts',
-      postID,
-      'liked',
-      `${getUID()}`
-    );
-    const snap = await getDoc(docRef);
-    return snap.exists();
+    if (getAuth().currentUser) {
+      const docRef = doc(
+        db,
+        'profiles',
+        id,
+        'posts',
+        postID,
+        'liked',
+        `${getUID()}`
+      );
+      const snap = await getDoc(docRef);
+      return snap.exists();
+    }
   }
 
   async function addLikes() {
@@ -261,41 +263,40 @@ const Profile = (props) => {
   async function fetchMoreComments(event) {
     const commentSectionLength =
       event.target.parentNode.parentNode.children[2].children.length;
-    if (commentSectionLength === 0) {
+    if (commentSectionLength === 1) {
       event.target.style.display = 'none';
-      return;
+    } else {
+      const postID = event.target.parentNode.parentNode.parentNode.id;
+      const commentsRef = collection(
+        db,
+        `/profiles/${id}/posts/${postID}/comments`
+      );
+      const q = query(
+        commentsRef,
+        orderBy('time'),
+        limit(3),
+        startAfter(lastComment)
+      );
+
+      const allComments = [...comments];
+      const result = await getDocs(q);
+
+      if (result.size === 0) {
+        event.target.display = 'none';
+      }
+
+      const lastVisible = result.docs[result.docs.length - 1];
+
+      if (result.size === 0)
+        event.target.parentNode.lastChild.style.display = 'none';
+
+      result.forEach((doc) => {
+        allComments.push(doc.data());
+        allComments[allComments.length - 1].id = doc.id;
+      });
+      setComments(allComments);
+      setLastComment(lastVisible);
     }
-
-    const postID = event.target.parentNode.parentNode.parentNode.id;
-    const commentsRef = collection(
-      db,
-      `/profiles/${id}/posts/${postID}/comments`
-    );
-    const q = query(
-      commentsRef,
-      orderBy('time'),
-      limit(3),
-      startAfter(lastComment)
-    );
-
-    const allComments = [...comments];
-    const result = await getDocs(q);
-
-    if (result.size === 0) {
-      event.target.display = 'none';
-    }
-
-    const lastVisible = result.docs[result.docs.length - 1];
-
-    if (result.size === 0)
-      event.target.parentNode.lastChild.style.display = 'none';
-
-    result.forEach((doc) => {
-      allComments.push(doc.data());
-      allComments[allComments.length - 1].id = doc.id;
-    });
-    setComments(allComments);
-    setLastComment(lastVisible);
   }
 
   const hideOtherCommentSections = (postID) => {
