@@ -7,6 +7,7 @@ import {
   updateDoc,
   Timestamp,
   getDocs,
+  increment,
   query,
   orderBy,
   DocumentReference,
@@ -77,6 +78,7 @@ const calculateDaysDifference = (firstDate, secondDate) => {
 async function updateHashtag(ref, data) {
   await updateDoc(ref, {
     time: serverTimestamp(),
+    notes: increment(1),
     trendingScore: calcTrendingScore(
       data.notes,
       calculateDaysDifference(data.time.toMillis(), Timestamp.now().toMillis())

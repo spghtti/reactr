@@ -13,8 +13,10 @@ import {
   addDoc,
   limit,
   collection,
+  DocumentReference,
   doc,
   getDoc,
+  where,
   getDocs,
   increment,
   startAfter,
@@ -104,6 +106,78 @@ const Profile = (props) => {
       commentSection.style.display = 'flex';
     }
   };
+
+  async function updateHashtag(ref, incrementValue) {
+    await updateDoc(ref, {
+      time: serverTimestamp(),
+      notes: increment(incrementValue),
+    });
+  }
+
+  async function writeHashtagsToTrending(hashtags, incrementValue) {
+    for (let index in hashtags) {
+      const q = query(
+        collection(db, 'trending-hashtags'),
+        where('hashtag', '==', hashtags[index])
+      );
+      const snap = await getDocs(q);
+
+      if (snap.size !== 0) {
+        snap.forEach((document) => {
+          const ref = new DocumentReference(document);
+          const docID = ref.firestore._key.path.segments[6];
+          const docRef = doc(db, 'trending-hashtags', docID);
+          updateHashtag(docRef, incrementValue);
+        });
+      }
+    }
+  }
+
+  async function removeNoteFromHashtag(postID) {
+    const postRef = doc(db, 'profiles', id, 'posts', postID);
+
+    const docRef = doc(
+      db,
+      'profiles',
+      id,
+      'posts',
+      postID,
+      'liked',
+      `${getUID()}`
+    );
+
+    const snap = await getDoc(docRef);
+    const result = await getDoc(postRef);
+
+    if (snap.exists()) {
+      const hashtags = result.data().hashtags;
+      console.log(hashtags);
+      writeHashtagsToTrending(hashtags, -1);
+    }
+  }
+
+  async function addNoteToHashtag(postID) {
+    const postRef = doc(db, 'profiles', id, 'posts', postID);
+
+    const docRef = doc(
+      db,
+      'profiles',
+      id,
+      'posts',
+      postID,
+      'liked',
+      `${getUID()}`
+    );
+
+    const snap = await getDoc(docRef);
+    const result = await getDoc(postRef);
+
+    if (!snap.exists()) {
+      const hashtags = result.data().hashtags;
+      console.log(hashtags);
+      writeHashtagsToTrending(hashtags, 1);
+    }
+  }
 
   async function checkForLike(postID) {
     if (getAuth().currentUser) {
@@ -203,18 +277,23 @@ const Profile = (props) => {
     const comment = document.getElementById(`input-${postID}`).value;
     const postsRef = doc(db, 'profiles', id, 'posts', postID);
 
-    try {
-      await addDoc(collection(postsRef, 'comments'), {
-        name: getUserName(),
-        photoURL: getPicture(),
-        comment,
-        uid: getUID(),
-        time: serverTimestamp(),
-      });
-    } catch (error) {
-      console.error('Error writing new message to Firebase Database', error);
+    if (comment.length > 0) {
+      try {
+        await addDoc(collection(postsRef, 'comments'), {
+          name: getUserName(),
+          photoURL: getPicture(),
+          comment,
+          uid: getUID(),
+          time: serverTimestamp(),
+        });
+      } catch (error) {
+        console.error('Error writing new message to Firebase Database', error);
+      }
+      addNote(postID);
+      addNoteToHashtag(postID);
+      event.target.style.pointerEvents = 'none';
+      document.getElementById(`input-${postID}`).value = '';
     }
-    document.getElementById(`input-${postID}`).value = '';
   }
 
   const checkCommentLength = (event) => {
@@ -346,11 +425,13 @@ const Profile = (props) => {
 
       if (event.target.dataset.liked === 'true') {
         removeNote(postID);
+        removeNoteFromHashtag(postID);
         event.target.dataset.liked = 'false';
         event.target.style.background = 'none';
         incrementNote(notes, -1);
       } else if (event.target.dataset.liked === 'false') {
         addNote(postID);
+        addNoteToHashtag(postID);
         event.target.dataset.liked = 'true';
         event.target.style.backgroundColor = 'red';
         incrementNote(notes, 1);
