@@ -1,11 +1,12 @@
 # reactr
 
-A Tumblr clone built with React. This is a solution as part of the Odin's Project's [final Javascript project](https://www.theodinproject.com/lessons/node-path-javascript-javascript-final-project) in its Full-Stack curriculum.
+A Tumblr clone built with React. This is a solution as part of the Odin's Project's [final Javascript project](https://www.theodinproject.com/lessons/node-path-javascript-javascript-final-project) to create a functional clone of a popular site using [Firebase](https://firebase.google.com/) for a backend.
 
 ![Reactr demo gif](https://raw.githubusercontent.com/spghtti/reactr/main/reactr.gif 'Reactr demo gif')
 
 ### Features
 
+- User creation
 - User authentication
 - Writing posts
 - Liking posts
@@ -14,7 +15,7 @@ A Tumblr clone built with React. This is a solution as part of the Odin's Projec
 
 ## Live project demo
 
-:point_right: [Click here]() :point_left:
+:point_right: [Click here](https://reactr-2cec5.web.app) :point_left:
 
 ## Run locally
 
@@ -36,4 +37,4 @@ npm start
 
 ## License
 
-Distributed under the MIT License. See LICENSE.txt for more information.
+Distributed under the MIT License. See LICENSE.md for more information.
