@@ -19,12 +19,9 @@ const Card = (props) => {
       <div className="content-card-image-container">
         <img src={placeholder} alt="" className="content-card-image" />
       </div>
-      <div className="content-card-title">Title goes here</div>
-      <div className="content-card-caption">Caption goes here.</div>
-      <div className="content-card-hashtags">
-        #stress #dreams #dreamy #lucid #surreal aesthetic #surrealphotography
-        #surrealist art #liminal
-      </div>
+      <div className="content-card-title"></div>
+      <div className="content-card-caption"></div>
+      <div className="content-card-hashtags"></div>
       <div className="content-card-footer">
         <div className="content-card-notes">XX notes</div>
         <div className="content-card-footer-icon-container">

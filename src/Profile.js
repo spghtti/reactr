@@ -98,12 +98,14 @@ const Profile = (props) => {
     const index = postID.indexOf('-');
     const ref = postID.slice(index + 1);
     const commentSection = document.getElementById(`comments-${ref}`);
+    const fetchedComments = commentSection.children[1];
 
     if (commentSection.style.display === 'flex') {
       commentSection.style.display = 'none';
     } else {
       fetchComments(event);
       commentSection.style.display = 'flex';
+      fetchedComments.style.display = '';
     }
   };
 
@@ -151,7 +153,6 @@ const Profile = (props) => {
 
     if (snap.exists()) {
       const hashtags = result.data().hashtags;
-      console.log(hashtags);
       writeHashtagsToTrending(hashtags, -1);
     }
   }
@@ -174,7 +175,6 @@ const Profile = (props) => {
 
     if (!snap.exists()) {
       const hashtags = result.data().hashtags;
-      console.log(hashtags);
       writeHashtagsToTrending(hashtags, 1);
     }
   }
@@ -394,7 +394,7 @@ const Profile = (props) => {
     });
     if (currentComments) {
       return (
-        <div id="fetched-comments">
+        <div className="fetched-comments">
           {comments.map((post, index) => (
             <div className="content-card-comment" key={index}>
               <Link to={`/profile/${post.uid}`} onClick={() => window.reload()}>

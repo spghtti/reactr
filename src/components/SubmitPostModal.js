@@ -112,7 +112,6 @@ async function writeHashtagsToTrending(hashtags) {
 }
 
 async function pushToFeatured(path) {
-  console.log('FLAG');
   try {
     await addDoc(collection(db, 'featured'), {
       reference: doc(db, path),
