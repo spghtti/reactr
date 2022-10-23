@@ -20,6 +20,7 @@ import {
   limit,
   serverTimestamp,
   query,
+  Timestamp,
   orderBy,
   where,
   setDoc,
@@ -27,16 +28,6 @@ import {
   startAfter,
 } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
-
-// async function fetchTrendingHashtags() {
-//   const docRef = collection(db, 'trending-hashtags');
-//   const docs = await getDocs(docRef);
-//   docs.forEach((doc) => {
-//     console.log(doc.data());
-//   });
-// }
-
-// const updateTrendingHashtags = () => {};
 
 function Explore(props) {
   const [userPosts, setUserPosts] = useState([]);
@@ -49,6 +40,7 @@ function Explore(props) {
 
   useEffect(() => {
     querySnapshot();
+    fetchTrendingHashtags();
   }, []);
 
   useEffect(() => {
@@ -60,6 +52,86 @@ function Explore(props) {
   }, [userPosts]);
 
   const featuredRef = collection(db, 'featured');
+
+  // FIX THIS TOMORROW
+
+  async function updateTrendingScoresOnLoad(hashtags) {
+    for (let index in hashtags) {
+      const q = query(
+        collection(db, 'trending-hashtags'),
+        where('hashtag', '==', hashtags[index])
+      );
+      const snap = await getDocs(q);
+
+      if (snap.size > 0) {
+        snap.forEach((document) => {
+          const ref = new DocumentReference(document);
+          const docID = ref.firestore._key.path.segments[6];
+          const docRef = doc(db, 'trending-hashtags', docID);
+          const newScore = calcTrendingScore(
+            document.data().notes,
+            calculateDaysDifference(
+              document.data().time.toMillis(),
+              Timestamp.now().toMillis()
+            )
+          );
+          updateDoc(docRef, {
+            trendingScore: newScore,
+          });
+          // updateHashtagDateAndScore(docRef, document.data());
+        });
+      }
+    }
+  }
+
+  async function fetchTrendingHashtags() {
+    const trendingRef = collection(db, 'trending-hashtags');
+    const q = query(trendingRef, orderBy('trendingScore', 'desc'), limit(4));
+    const result = await getDocs(q);
+    const hashtags = [];
+    result.forEach((document) => {
+      hashtags.push({
+        hashtag: document.data().hashtag,
+        score: document.data().trendingScore,
+      });
+    });
+    hashtags.sort((a, b) => {
+      return b.trendingScore - a.trendingScore;
+    });
+    showTrendingHashtags(hashtags);
+    updateTrendingScoresOnLoad(hashtags);
+  }
+
+  const showTrendingHashtags = (hashtags) => {
+    const trendingHashtags = document.querySelectorAll(
+      '.Explore-trend-hashtag-headline'
+    );
+    for (let i = 0; i < trendingHashtags.length; i++) {
+      console.log(trendingHashtags[i]);
+      trendingHashtags[i].textContent = `${hashtags[i].hashtag}`;
+    }
+  };
+
+  const calcTrendingScore = (notes, daysOld) => 3 * notes * (0.9 ^ daysOld);
+
+  const calculateDaysDifference = (firstDate, secondDate) => {
+    const difference = secondDate - firstDate;
+    return Math.ceil(Math.abs(difference / (1000 * 3600 * 24)));
+  };
+
+  async function updateHashtagDateAndScore(ref, data) {
+    await updateDoc(ref, {
+      time: serverTimestamp(),
+      notes: increment(1),
+      trendingScore: calcTrendingScore(
+        data.notes,
+        calculateDaysDifference(
+          data.time.toMillis(),
+          Timestamp.now().toMillis()
+        )
+      ),
+    });
+  }
 
   async function getFeaturedPost() {
     const array = [];
@@ -134,13 +206,6 @@ function Explore(props) {
     commentSections.forEach((commentSection) => {
       if (commentSection.id !== postID) commentSection.style.display = 'none';
     });
-  };
-
-  const calcTrendingScore = (notes, daysOld) => 3 * notes * (0.9 ^ daysOld);
-
-  const calculateDaysDifference = (firstDate, secondDate) => {
-    const difference = secondDate - firstDate;
-    return Math.ceil(Math.abs(difference / (1000 * 3600 * 24)));
   };
 
   async function updateHashtag(ref, incrementValue) {
