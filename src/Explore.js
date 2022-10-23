@@ -107,7 +107,6 @@ function Explore(props) {
       '.Explore-trend-hashtag-headline'
     );
     for (let i = 0; i < trendingHashtags.length; i++) {
-      console.log(trendingHashtags[i]);
       trendingHashtags[i].textContent = `${hashtags[i].hashtag}`;
     }
   };
@@ -252,7 +251,6 @@ function Explore(props) {
 
     if (snap.exists()) {
       const hashtags = result.data().hashtags;
-      console.log(hashtags);
       writeHashtagsToTrending(hashtags, -1);
     }
   }
@@ -275,7 +273,6 @@ function Explore(props) {
 
     if (!snap.exists()) {
       const hashtags = result.data().hashtags;
-      console.log(hashtags);
       writeHashtagsToTrending(hashtags, 1);
     }
   }
