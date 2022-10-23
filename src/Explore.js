@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/heading-has-content */
 import './style/Explore.css';
 import './style/Header.css';
 import './style/Profile.css';
@@ -607,11 +608,16 @@ function Explore(props) {
             >
               <div className="content-card-header">
                 <div className="content-card-header-profile-info">
-                  <img
-                    src={post.profilePictureURL}
-                    alt=""
-                    className="profile-picture"
-                  />
+                  <Link
+                    to={`/profile/${post.userID}`}
+                    onClick={() => window.reload()}
+                  >
+                    <img
+                      src={post.profilePictureURL}
+                      alt=""
+                      className="profile-picture"
+                    />
+                  </Link>
                   <span>{post.name}</span>
                 </div>
                 <div className="content-card-header-profile-info-ellipsis">
@@ -700,7 +706,7 @@ function Explore(props) {
                   >
                     1
                   </div>
-                  <h3 className="Explore-trend-hashtag-headline">Trend</h3>
+                  <h3 className="Explore-trend-hashtag-headline"></h3>
                 </div>
               </div>
               <div className="Explore-trend-card" id="hashtag-trend-two">
@@ -711,7 +717,7 @@ function Explore(props) {
                   >
                     2
                   </div>
-                  <h3 className="Explore-trend-hashtag-headline">Trend</h3>
+                  <h3 className="Explore-trend-hashtag-headline"></h3>
                 </div>
               </div>
               <div className="Explore-trend-card" id="hashtag-trend-three">
@@ -722,7 +728,7 @@ function Explore(props) {
                   >
                     3
                   </div>
-                  <h3 className="Explore-trend-hashtag-headline">Trend</h3>
+                  <h3 className="Explore-trend-hashtag-headline"></h3>
                 </div>
               </div>
               <div className="Explore-trend-card" id="hashtag-trend-four">
@@ -733,7 +739,7 @@ function Explore(props) {
                   >
                     4
                   </div>
-                  <h3 className="Explore-trend-hashtag-headline">Trend</h3>
+                  <h3 className="Explore-trend-hashtag-headline"></h3>
                 </div>
               </div>
             </div>
@@ -752,11 +758,13 @@ function Explore(props) {
             </h2>
             <div className="featured-profile">
               <div className="featured-profile-picture">
-                <img
-                  src="https://avatars.githubusercontent.com/u/2266075?v=4"
-                  alt=""
-                  className="profile-picture"
-                />
+                <Link to={`profile/ZHdGiTZnIiPEOktJnqDcFFqgs1y2`}>
+                  <img
+                    src="https://avatars.githubusercontent.com/u/2266075?v=4"
+                    alt=""
+                    className="profile-picture"
+                  />
+                </Link>
               </div>
               <div className="featured-profile-info">
                 <Link to={`profile/ZHdGiTZnIiPEOktJnqDcFFqgs1y2`}>
