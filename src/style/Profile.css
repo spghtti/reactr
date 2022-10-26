@@ -17,14 +17,22 @@ body {
   width: 100vw;
 }
 .profile-card-column {
-  width: 540px;
+  max-width: 540px;
+  min-width: 325px;
   height: auto;
+  overflow-x: hidden;
 }
 .content-card {
   background-color: #ffffff;
-  width: 540px;
+  max-width: 540px;
   max-height: 1100px;
+  min-width: 325px;
   border-radius: 5px;
+}
+@media (max-width: 550px) {
+  .content-card {
+    margin: 10px;
+  }
 }
 .content-card-header {
   display: flex;

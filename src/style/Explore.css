@@ -1,6 +1,7 @@
 body {
   font-family: 'Inter', sans-serif;
   font-weight: 600;
+  overflow-x: hidden;
 }
 a:visited {
   color: #61dafb;
@@ -110,6 +111,7 @@ a:visited {
   cursor: pointer;
 }
 .Explore-featured {
+  overflow-x: hidden;
   height: auto;
   width: 100%;
   display: flex;
@@ -117,14 +119,14 @@ a:visited {
   align-items: flex-end;
   flex-direction: row;
 }
-.Explore-featured-card {
+/* .Explore-featured-card {
   min-width: 300px;
   min-height: 572px;
   flex-basis: 100%;
   background-color: #61dafb;
   outline: 2px solid black;
   display: flex;
-}
+} */
 #hashtag-trend-one {
   background-color: rgba(232, 215, 56, 0.5);
 }
