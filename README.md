@@ -6,7 +6,7 @@ A Tumblr clone built with React. This is a solution as part of the Odin's Projec
 
 ### Features
 
-- User creation
+- User creation via email and Google
 - User authentication
 - Writing posts
 - Liking posts
