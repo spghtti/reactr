@@ -138,6 +138,7 @@ function Explore(props) {
     for (const key of postKeys) {
       const docRef = doc(db, 'profiles', key[0], 'posts', key[1]);
       const result = await getDoc(docRef);
+      console.log(result.data());
       if (result.data()) {
         array.push(result.data());
         array[array.length - 1].userID = key[0];

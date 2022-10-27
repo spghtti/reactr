@@ -162,6 +162,7 @@ async function writePost(event) {
   } catch (error) {
     console.error('Error writing new message to Firebase Database', error);
   }
+  createExploreRef(profileRef);
   writeHashtagsToTrending(hashtags);
   // UNCOMMENT THIS ONCE TRENDING HASHTAGS IS SOLVED
   // createExploreRef(profileRef);
