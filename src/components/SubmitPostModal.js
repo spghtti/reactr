@@ -164,8 +164,6 @@ async function writePost(event) {
   }
   createExploreRef(profileRef);
   writeHashtagsToTrending(hashtags);
-  // UNCOMMENT THIS ONCE TRENDING HASHTAGS IS SOLVED
-  // createExploreRef(profileRef);
   closePostModal(event);
 }
 
