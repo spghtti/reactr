@@ -179,6 +179,8 @@ a:visited {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  max-width: 540px;
+  margin-left: auto;
 }
 .sidebar-footer {
   bottom: 0;
@@ -228,5 +230,9 @@ a:visited {
     height: 88px;
     min-width: 300px;
     flex-basis: 90%;
+  }
+  .load-more-button-container {
+    margin-left: auto;
+    margin-right: auto;
   }
 }
