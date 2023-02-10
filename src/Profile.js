@@ -16,6 +16,7 @@ import {
   DocumentReference,
   doc,
   getDoc,
+  Timestamp,
   where,
   getDocs,
   increment,
@@ -109,10 +110,27 @@ const Profile = (props) => {
     }
   };
 
+  const calcTrendingScore = (notes, daysOld) => {
+    console.log(notes, daysOld);
+    return 3 * notes * 0.9 ** daysOld;
+  };
+
+  const calculateDaysDifference = (firstDate, secondDate) => {
+    const difference = secondDate - firstDate;
+    return Math.ceil(Math.abs(difference / (1000 * 3600 * 24)));
+  };
+
   async function updateHashtag(ref, incrementValue) {
+    const docSnap = await getDoc(ref);
     await updateDoc(ref, {
-      time: serverTimestamp(),
       notes: increment(incrementValue),
+      trendingScore: calcTrendingScore(
+        docSnap.data().notes + incrementValue,
+        calculateDaysDifference(
+          docSnap.data().time.toMillis(),
+          Timestamp.now().toMillis()
+        )
+      ),
     });
   }
 

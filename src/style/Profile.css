@@ -110,8 +110,8 @@ body {
   width: 25px;
   margin: 10px;
   border-radius: 20%;
-  padding: 3px;
   cursor: pointer;
+  padding: 3px;
 }
 .load-more-container {
   display: flex;

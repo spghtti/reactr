@@ -54,15 +54,16 @@ function Explore(props) {
 
   const featuredRef = collection(db, 'featured');
 
-  // FIX THIS TOMORROW
-
   async function updateTrendingScoresOnLoad(hashtags) {
     for (let index in hashtags) {
       const q = query(
         collection(db, 'trending-hashtags'),
-        where('hashtag', '==', hashtags[index])
+        where('hashtag', '==', hashtags[index].hashtag)
       );
+
       const snap = await getDocs(q);
+
+      // BUG HERE?
 
       if (snap.size > 0) {
         snap.forEach((document) => {
@@ -79,7 +80,7 @@ function Explore(props) {
           updateDoc(docRef, {
             trendingScore: newScore,
           });
-          // updateHashtagDateAndScore(docRef, document.data());
+          // updateHashtagScore(docRef, document.data());
         });
       }
     }
@@ -112,26 +113,28 @@ function Explore(props) {
     }
   };
 
-  const calcTrendingScore = (notes, daysOld) => 3 * notes * (0.9 ^ daysOld);
+  const calcTrendingScore = (notes, daysOld) => {
+    console.log(notes, daysOld);
+    return 3 * notes * 0.9 ** daysOld;
+  };
 
   const calculateDaysDifference = (firstDate, secondDate) => {
     const difference = secondDate - firstDate;
     return Math.ceil(Math.abs(difference / (1000 * 3600 * 24)));
   };
 
-  async function updateHashtagDateAndScore(ref, data) {
-    await updateDoc(ref, {
-      time: serverTimestamp(),
-      notes: increment(1),
-      trendingScore: calcTrendingScore(
-        data.notes,
-        calculateDaysDifference(
-          data.time.toMillis(),
-          Timestamp.now().toMillis()
-        )
-      ),
-    });
-  }
+  // async function updateHashtagScore(ref, data) {
+  //   await updateDoc(ref, {
+  //     notes: increment(1),
+  //     trendingScore: calcTrendingScore(
+  //       data.notes,
+  //       calculateDaysDifference(
+  //         data.time.toMillis(),
+  //         Timestamp.now().toMillis()
+  //       )
+  //     ),
+  //   });
+  // }
 
   async function getFeaturedPost() {
     const array = [];
@@ -209,13 +212,22 @@ function Explore(props) {
   };
 
   async function updateHashtag(ref, incrementValue) {
+    const docSnap = await getDoc(ref);
     await updateDoc(ref, {
-      time: serverTimestamp(),
       notes: increment(incrementValue),
+      trendingScore: calcTrendingScore(
+        docSnap.data().notes + incrementValue,
+        calculateDaysDifference(
+          docSnap.data().time.toMillis(),
+          Timestamp.now().toMillis()
+        )
+      ),
     });
   }
 
   async function writeHashtagsToTrending(hashtags, incrementValue) {
+    // BUG HERe?
+
     for (let index in hashtags) {
       const q = query(
         collection(db, 'trending-hashtags'),
